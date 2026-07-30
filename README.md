@@ -67,6 +67,17 @@ claude --plugin-dir ./plugins/migration-case-manager
 
 On its first use, the skill previews the platform-matched, version-pinned native download (release URL, SHA-256, and destination) and waits for consent. It then verifies the artifact and its `doctor` result before activation; Python, Node, Bun, and npm are not user runtime requirements.
 
+### Optional `npx` shortcut
+
+After a matching GitHub Release and npm package version are published, users who already have Node.js 20+ may use the small launcher instead of invoking the platform bootstrap script manually:
+
+```bash
+npx @beautyfree/migration-os --release v0.1.0 --yes-download doctor
+npx @beautyfree/migration-os --release v0.1.0 init ~/migration-cases/example
+```
+
+The launcher is not a second JavaScript runtime. It downloads the same platform-matched native binary, checks its release SHA-256, runs `doctor` before activation, and forwards the remaining command. Without `--yes-download`, it only previews the exact download and checksum. It is optional: a machine without Node continues to use the native plugin bootstrap path.
+
 Create a case folder outside the plugin and outside version control containing sensitive evidence:
 
 ```bash
@@ -106,6 +117,8 @@ Do not put originals, passwords, one-time codes, passport numbers, bank details,
 ```bash
 bun --cwd plugins/migration-case-manager/apps/migration-os-ui run test
 bun --cwd plugins/migration-case-manager/apps/migration-os-ui run compile
+node --test packages/migration-os/test/*.test.mjs
+npm pack --dry-run ./packages/migration-os
 ```
 
 For Claude Code development, test the same plugin with:

@@ -1,0 +1,30 @@
+{
+  "name": "@beautyfree/migration-os",
+  "version": "0.1.0",
+  "description": "Consent-first npx launcher for the Migration OS native runtime.",
+  "license": "UNLICENSED",
+  "type": "module",
+  "bin": {
+    "migration-os": "./bin/migration-os.mjs"
+  },
+  "files": [
+    "bin/",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/beautyfree/migration-case-manager.git",
+    "directory": "packages/migration-os"
+  },
+  "bugs": {
+    "url": "https://github.com/beautyfree/migration-case-manager/issues"
+  },
+  "homepage": "https://github.com/beautyfree/migration-case-manager#readme",
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  }
+}
