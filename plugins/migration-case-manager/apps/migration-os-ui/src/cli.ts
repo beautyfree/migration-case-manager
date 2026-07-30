@@ -5,6 +5,7 @@ import { dirname, join, resolve } from "node:path";
 import { embeddedAssets } from "./embedded-assets";
 import { appendJsonLine, caseFile, loadCase, readCaseText, readJsonLines, runtimePath } from "./case-core";
 import { validateCase } from "./validate";
+import { initCase } from "./operations";
 
 const cookieName = "migration_os_session";
 const root = resolve(import.meta.dir, "..");
@@ -45,7 +46,8 @@ function usage() { console.log("Usage: migration-os-ui <serve|status|stop|valida
 const [command, target, ...flags] = process.argv.slice(2);
 if (!command || !target) { usage(); process.exit(2); }
 const caseDir = resolve(target);
-if (command === "serve") await serve(caseDir, flags.includes("--no-browser"));
+if (command === "init") { const created = await initCase(caseDir); console.log(JSON.stringify({ ok:true, command:"migration-os init", result:{ case_path:created }, next_actions:[{ command:"migration-os validate <case-directory>", description:"Validate the newly created case before adding records." }] })); }
+else if (command === "serve") await serve(caseDir, flags.includes("--no-browser"));
 else if (command === "status") { const path = statePath(caseDir); console.log(existsSync(path) ? readFileSync(path, "utf8") : "not running"); }
 else if (command === "stop") { const path = statePath(caseDir); if (!existsSync(path)) throw new Error("not running"); const state = JSON.parse(readFileSync(path, "utf8")); process.kill(state.pid, "SIGTERM"); console.log("stop requested"); }
 else if (command === "validate") { const validation = validateCase(caseDir); console.log(JSON.stringify({ ok:validation.ok, command:"migration-os validate", result:validation, next_actions:validation.ok ? [] : [{ command:"migration-os validate <case-directory>", description:"Re-run after correcting the reported case source files." }] })); if (!validation.ok) process.exitCode = 1; }
