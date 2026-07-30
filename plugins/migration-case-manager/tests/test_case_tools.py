@@ -322,6 +322,44 @@ class CaseToolsTest(unittest.TestCase):
             second = run("create_provider_comparison.py", case, Path("ACT-001"), Path("--service"), Path("translator"), Path("--city"), Path("Tbilisi"), expected=2)
             self.assertIn("refusing to overwrite", second.stderr)
 
+    def test_validator_requires_decision_and_receipt_for_confirmed_appointment(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            case = Path(temp) / "case"
+            run("create_case.py", case)
+            append(case / "65-appointments.md", """
+## APPT-001 — Synthetic notary appointment
+
+- Service: notary
+- Provider comparison: provider-comparisons/ACT-001.md
+- Selected provider: Example Notary
+- Participants: PERSON-001
+- Scheduled for: 2026-08-10
+- Status: confirmed
+- Action: ACT-001
+- Decision: none
+- Receipt: none
+- Rescheduled from: none
+- Cancellation reason: none
+""")
+            append(case / "50-actions.md", """
+## ACT-001 — Attend synthetic appointment
+
+- Purpose: test appointment lifecycle.
+- Requirements: none
+- Dependencies: none
+- Status: scheduled
+- Class: human_only
+- Owner: PERSON-001
+- Target: unknown
+- Deadline: 2026-08-10
+- Expected receipt: EVD-001
+- Receipt: none
+- Decision: none
+""")
+            result = run("validate_case.py", case, expected=1)
+            self.assertIn("confirmed without accepted decision", result.stdout)
+            self.assertIn("confirmed without EVD receipt", result.stdout)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -33,10 +33,10 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 | Field | Value |
 | --- | --- |
 | Product phase | R2 — Official rules and source engine |
-| Current item | `R4-03` |
+| Current item | `R5-01` |
 | Current status | `in_progress` |
-| Next concrete outcome | Model appointment lifecycle so search, selection, booking, receipt, reschedule, and cancellation are distinguishable. |
-| Primary blocker | Live booking remains blocked until the user supplies a provider/city and gives scoped confirmation. |
+| Next concrete outcome | Add the finance and logistics lane with safe non-sensitive records and source-linked actions. |
+| Primary blocker | Actual city, move date, insurance needs, and budget constraints are still user choices; they do not block the reusable lane. |
 | Canonical case data | Markdown case folder outside the plugin and outside Git. |
 | Current repository | `https://github.com/beautyfree/migration-case-manager` |
 
@@ -107,7 +107,7 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 | --- | --- | --- | --- | --- |
 | `R4-01` | `done` | Define executable action and receipt schema. | Actions encode dependencies, scope, consent class, official URL/provider, expected receipt, state, owner, and deadline. | `R1` |
 | `R4-02` | `done` | Add browser runbook protocol. | The Georgia reference case binds each browser target to an official source domain and action class; the runbook blocks data entry on a domain mismatch and requires current scoped consent before submission, booking, payment, messaging, or disclosure. | `R4-01`, `R2-04` |
-| `R4-03` | `in_progress` | Add appointment/provider workflow. | Search, comparison, user selection, booking confirmation, and reschedule/cancel states are distinguished. | `R3-04`, `R4-02` |
+| `R4-03` | `done` | Add appointment/provider workflow. | Added `APPT-*` records and lifecycle validation. Confirmed/completed appointments require scoped consent plus an evidence receipt; reschedules reference the predecessor and cancellations require a reason. Contract test and v1 migration test pass. | `R3-04`, `R4-02` |
 | `R4-04` | `done` | Add action status and receipt verification. | A page opening cannot close an action; a receipt or reason is required. | `R4-01` |
 
 ## Release R5 — Landing OS
@@ -116,7 +116,7 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 
 | ID | Status | Work | Acceptance criteria | Depends on |
 | --- | --- | --- | --- | --- |
-| `R5-01` | `planned` | Add finance and logistics lane. | Track budget, insurance, cash, connectivity, housing, and transport as route-specific actions without financial advice or sensitive account data. | `R1`, `R2-04` |
+| `R5-01` | `in_progress` | Add finance and logistics lane. | Track budget, insurance, cash, connectivity, housing, and transport as route-specific actions without financial advice or sensitive account data. | `R1`, `R2-04` |
 | `R5-02` | `planned` | Add 72-hour, 30-day, and 90-day landing workflows. | Dashboard switches from filing-critical actions to arrival-critical actions at the recorded move date. | `R5-01`, `R4` |
 | `R5-03` | `planned` | Add family and resilience branches. | Dependants, pets, school, lost documents, and urgent “already abroad” recovery are explicit case branches. | `R3`, `R5-02` |
 
@@ -166,3 +166,4 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 | 2026-07-30 | Completed `R3-02`: added deterministic document issue/order timing analysis; unknown input remains a visible gap. Started `R3-03`. |
 | 2026-07-30 | Completed `R3-03`: document readiness now has an explicit, evidence-free quality gate. Started `R3-04`. |
 | 2026-07-30 | Completed `R3-04`: added consent-safe provider comparison runbook and non-destructive comparison generator. Started `R4-03`. |
+| 2026-07-30 | Completed `R4-03`: added validated appointment lifecycle records and migration support. Started `R5-01`. |

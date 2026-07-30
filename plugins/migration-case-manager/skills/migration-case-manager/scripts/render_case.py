@@ -8,7 +8,7 @@ import re
 from datetime import date
 from pathlib import Path
 
-HEADING = re.compile(r"^##\s+((?:PERSON|ROUTE|SRC|REQ|DOC|ACT|MILESTONE|LOG|DEC|EVD)-\d{3,})\s+—\s+(.+)$", re.MULTILINE)
+HEADING = re.compile(r"^##\s+((?:PERSON|ROUTE|SRC|REQ|DOC|ACT|MILESTONE|LOG|DEC|EVD|APPT)-\d{3,})\s+—\s+(.+)$", re.MULTILINE)
 FIELD = re.compile(r"^- ([^:]+):\s*(.+)$", re.MULTILINE)
 FRONTMATTER = re.compile(r"^---\n(.*?)\n---\n?", re.DOTALL)
 
@@ -57,6 +57,7 @@ def main() -> int:
         "40-documents.md": "Documents",
         "50-actions.md": "Actions",
         "60-timeline.md": "Milestones",
+        "65-appointments.md": "Appointments",
         "80-decisions.md": "Decisions",
     }
     contents = {filename: (case / filename).read_text(encoding="utf-8") for filename in files if (case / filename).is_file()}
@@ -109,6 +110,9 @@ def main() -> int:
     render_section(lines, "Blockers", blocked, "No blocked requirements recorded.")
     render_section(lines, "Actions needing a person", human_actions, "No active confirmation-required or human-only actions.")
     render_section(lines, "Source freshness", stale_sources, "No stale or non-current source records.")
+    appointment_records = grouped["Appointments"]
+    appointment_attention = [line(item, f"{item['fields'].get('Status', 'unknown')}; scheduled {item['fields'].get('Scheduled for', 'unknown')}") for item in appointment_records if item["fields"].get("Status") not in {"completed", "cancelled"}]
+    render_section(lines, "Appointment lifecycle", appointment_attention, "No active appointments recorded.")
     render_section(lines, "Critical-path actions", [entry for _, entry in sorted(critical_actions)], "No incomplete actions with a deadline.")
     render_section(lines, "Upcoming milestones", [entry for _, entry in sorted(milestones)], "No dated milestones recorded.")
     lines.extend(["This dashboard is generated. Update numbered source files, validate the case, then render again.", ""])

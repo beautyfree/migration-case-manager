@@ -20,6 +20,7 @@ This is the canonical contract for a Migration OS case. Markdown source files ar
 | `40-documents.md` | documents | document inventory and transformations | `30-documents.md` |
 | `50-actions.md` | actions | executable work, consent and receipts | `40-actions.md` |
 | `60-timeline.md` | orchestrator | dated commitments and critical path | `50-timeline.md` |
+| `65-appointments.md` | actions | provider appointment lifecycle and receipts | new |
 | `70-finance-logistics.md` | landing | non-sensitive budget/logistics work | new |
 | `80-decisions.md` | person + orchestrator | choices, scoped consent, exceptions | `60-decisions.md` |
 | `90-evidence-index.md` | documents | safe evidence references and checks | `70-evidence-index.md` |
@@ -150,6 +151,14 @@ Use the exact field labels specified below. Link fields contain a comma-separate
 - Required fields: `Date`, `Kind`, `Status`, `Depends on`, `Linked records`, `Consequence if missed`.
 - `Kind` is `deadline`, `appointment`, `expiry`, `target`, or `review`.
 - A `Date` is an exact date or `unknown`; a calculated latest-safe date must include a note naming the upstream dependency.
+
+### Appointments
+
+`APPT-*` records live in `65-appointments.md`.
+
+- Required fields: `Service`, `Provider comparison`, `Selected provider`, `Participants`, `Scheduled for`, `Status`, `Action`, `Decision`, `Receipt`, `Rescheduled from`, `Cancellation reason`.
+- `Status` is exactly `researching`, `candidate_selected`, `booking_pending`, `confirmed`, `reschedule_requested`, `rescheduled`, `cancel_requested`, `cancelled`, or `completed`.
+- `confirmed` and `completed` require an accepted scoped `DEC-*` record and an `EVD-*` receipt. `rescheduled` links its predecessor through `Rescheduled from`; `cancelled` names a non-sensitive reason. No appointment record contains an access code, booking reference, name, address, or document contents.
 
 ### Finance and logistics
 

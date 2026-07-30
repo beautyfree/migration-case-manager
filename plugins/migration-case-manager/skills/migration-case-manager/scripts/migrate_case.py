@@ -116,10 +116,10 @@ def main() -> int:
     for old_name, new_name in V1_TO_V2.items():
         write_migrated(destination / new_name, case_id, new_name, source / old_name)
     templates = Path(__file__).resolve().parents[3] / "templates" / "case"
-    for filename in ("20-route-options.md", "70-finance-logistics.md"):
+    for filename in ("20-route-options.md", "65-appointments.md", "70-finance-logistics.md"):
         copy_template(templates / filename, destination / filename, case_id)
     (destination / "evidence").mkdir(exist_ok=True)
-    (destination / ".gitignore").write_text("evidence/\n99-dashboard.md\n", encoding="utf-8")
+    (destination / ".gitignore").write_text("evidence/\n99-dashboard.md\n.migration-os/\n", encoding="utf-8")
     report = [
         "---",
         f"case_id: {case_id}",
