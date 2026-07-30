@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "contract_version": "1.0.0",
+  "binary_name": "migration-os",
+  "case_schema": "v2",
+  "output": {
+    "format": "json",
+    "stdout": "exactly_one_json_object",
+    "stderr": "diagnostic_only",
+    "max_list_items": 50,
+    "forbidden_fields": [
+      "credentials",
+      "cookies",
+      "document_contents",
+      "evidence_contents",
+      "one_time_codes",
+      "passport_numbers"
+    ]
+  },
+  "storage": {
+    "case_authority": "markdown_case_directory",
+    "runtime_state": ".migration-os",
+    "runtime_state_is_disposable": true,
+    "binary_install_scope": "user_application_data",
+    "network_policy": "disabled_unless_command_declares_public_source_fetch"
+  },
+  "commands": [
+    {"id":"doctor","usage":"migration-os doctor","network":"none","writes":[],"description":"Verify binary, platform, local storage and browser-launch capability."},
+    {"id":"init","usage":"migration-os init <case-directory>","network":"none","writes":["case_markdown"],"description":"Create a new v2 Markdown case without evidence."},
+    {"id":"validate","usage":"migration-os validate <case-directory>","network":"none","writes":[],"description":"Validate case schema, links, safety fields and readiness constraints."},
+    {"id":"render","usage":"migration-os render <case-directory>","network":"none","writes":["99-dashboard.md"],"description":"Regenerate derived Markdown dashboard."},
+    {"id":"serve","usage":"migration-os serve <case-directory> [--no-browser]","network":"loopback_only","writes":[".migration-os/ui-session.json"],"description":"Serve embedded UI on 127.0.0.1 with a fresh local session."},
+    {"id":"status","usage":"migration-os status <case-directory>","network":"none","writes":[],"description":"Read disposable local UI state."},
+    {"id":"stop","usage":"migration-os stop <case-directory>","network":"none","writes":[".migration-os/ui-session.json"],"description":"Stop a case-local UI daemon."},
+    {"id":"sources.refresh","usage":"migration-os sources refresh <case-directory> [--dry-run]","network":"public_source_urls_only","writes":[".migration-os/source-state.json"],"description":"Refresh hashes and dates for existing official-source URLs only."},
+    {"id":"requests.list","usage":"migration-os requests list <case-directory>","network":"none","writes":[],"description":"List bounded local agent requests."},
+    {"id":"requests.claim","usage":"migration-os requests claim <case-directory> <request-id>","network":"none","writes":[".migration-os/events.jsonl"],"description":"Record an agent claim; no external action is authorized."},
+    {"id":"requests.complete","usage":"migration-os requests complete <case-directory> <request-id>","network":"none","writes":[".migration-os/events.jsonl"],"description":"Record a completed local request after case updates."},
+    {"id":"branch.create","usage":"migration-os branch create <case-directory> <kind> [--owner <person-id>]","network":"none","writes":["case_markdown"],"description":"Create a deterministic resilience work queue."},
+    {"id":"provider.comparison","usage":"migration-os provider comparison <case-directory> <action-id> --service <service> --city <city>","network":"none","writes":["case_markdown"],"description":"Create a non-destructive provider comparison shell."},
+    {"id":"migrate","usage":"migration-os migrate <v1-case-directory> <v2-case-directory>","network":"none","writes":["destination_case_markdown"],"description":"Non-destructively migrate a v1 case into a distinct v2 destination."}
+  ],
+  "error_codes": [
+    "BINARY_UNSUPPORTED_PLATFORM",
+    "BINARY_CHECKSUM_MISMATCH",
+    "BINARY_NOT_VERIFIED",
+    "CASE_NOT_FOUND",
+    "CASE_INVALID",
+    "CASE_WRITE_REFUSED",
+    "RUNTIME_NOT_RUNNING",
+    "BROWSER_UNAVAILABLE",
+    "SOURCE_FETCH_REFUSED",
+    "SOURCE_FETCH_FAILED",
+    "REQUEST_NOT_FOUND",
+    "CONSENT_REQUIRED",
+    "HUMAN_ACTION_REQUIRED"
+  ],
+  "upgrade": {
+    "automatic": false,
+    "requires_explicit_user_consent": true,
+    "preserve_last_verified_binary_on_failure": true,
+    "verify_sha256_before_activation": true
+  }
+}

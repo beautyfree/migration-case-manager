@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://migration-os.dev/contracts/cli-response.schema.json",
+  "title": "Migration OS CLI response",
+  "type": "object",
+  "required": ["ok", "command", "next_actions"],
+  "properties": {
+    "ok": {"type": "boolean"},
+    "command": {"type": "string", "minLength": 1},
+    "result": {"type": "object"},
+    "error": {
+      "type": "object",
+      "required": ["code", "message"],
+      "properties": {
+        "code": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]+$"},
+        "message": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "fix": {"type": "string", "minLength": 1},
+    "next_actions": {
+      "type": "array",
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "required": ["command", "description"],
+        "properties": {
+          "command": {"type": "string", "minLength": 1},
+          "description": {"type": "string", "minLength": 1},
+          "params": {"type": "object"}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"ok": {"const": true}}, "required": ["ok"]},
+      "then": {"required": ["result"], "not": {"required": ["error", "fix"]}}
+    },
+    {
+      "if": {"properties": {"ok": {"const": false}}, "required": ["ok"]},
+      "then": {"required": ["error", "fix"], "not": {"required": ["result"]}}
+    }
+  ],
+  "additionalProperties": false
+}
