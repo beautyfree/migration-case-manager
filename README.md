@@ -13,6 +13,7 @@ The core is shared by Codex and Claude Code. The platform-specific manifests onl
 - `migration-research` — verifies route-specific requirements from primary official sources.
 - `migration-actions` — turns verified work into browser and real-world actions with explicit consent boundaries.
 - Markdown case templates plus local `create_case.py`, `validate_case.py`, and `render_case.py` tools.
+- A sanitized, source-linked reference case for a Russian family temporarily moving to Georgia and considering an individual entrepreneur path: [`examples/georgia-russia-ie-family`](plugins/migration-case-manager/examples/georgia-russia-ie-family/README.md).
 
 When official sources conflict, preserve both `SRC-*` records, mark the source `conflicting`, and block the linked `REQ-*`; do not select whichever answer looks easier.
 
@@ -62,6 +63,8 @@ python3 plugins/migration-case-manager/skills/migration-case-manager/scripts/ren
 ```
 
 The generated case contains numbered Markdown source files. `99-dashboard.md` is derived output; update the source files and render again rather than editing it.
+
+The bundled reference case is deliberately incomplete where a legal conclusion depends on personal facts. It shows the operational distinction between entry/stay, IE registration, tax status, a work residence permit, and family reunification; copy records into a private case rather than editing the example.
 
 ## Safety model
 

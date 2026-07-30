@@ -33,10 +33,10 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 | Field | Value |
 | --- | --- |
 | Product phase | R2 — Official rules and source engine |
-| Current item | `R2-01` / `DEC-PROD-001` |
-| Current status | `blocked` |
-| Next concrete outcome | Receive the first reference corridor, then build and live-verify its route pack. |
-| Primary blocker | `R2-01`: a real reference corridor is required before route-pack and document-operation acceptance. |
+| Current item | `R2-05` |
+| Current status | `in_progress` |
+| Next concrete outcome | Add a source-refresh diff that detects changed, unavailable, stale, and new snapshots in a case. |
+| Primary blocker | No implementation blocker; the Georgia case still has user decisions that prevent filings but not source monitoring. |
 | Canonical case data | Markdown case folder outside the plugin and outside Git. |
 | Current repository | `https://github.com/beautyfree/migration-case-manager` |
 
@@ -75,11 +75,11 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 
 | ID | Status | Work | Acceptance criteria | Depends on |
 | --- | --- | --- | --- | --- |
-| `R2-01` | `blocked` | Choose a real reference corridor and legal basis. | User confirms citizenship, current country of application, destination, basis, family shape, and target period. | User decision |
+| `R2-01` | `done` | Choose a real reference corridor and legal basis. | User confirmed: Russian citizens applying from Russia, temporary move to Georgia, intended individual-entrepreneur registration, spouse, and a five-month-old child. Target city, period, business activity, tax status, and selected residence route stay explicit open decisions. | User decision |
 | `R2-02` | `done` | Add source records and freshness policy to schema. | Every `SRC-*` includes publisher, official URL, retrieved date, update date if known, applicability, and recheck date. | `R1` |
 | `R2-03` | `done` | Build route research workflow and source-conflict handling. | Conflicting official pages preserve both claims and mark the requirement blocked; no silent choice. | `R2-02` |
-| `R2-04` | `planned` | Create first route pack from live primary sources. | Every requirement in the reference case is source-linked and date-verified. | `R2-01`, `R2-03` |
-| `R2-05` | `planned` | Add source refresh diff. | Rechecking a case identifies new, changed, unavailable, and stale sources. | `R2-02`, `R2-04` |
+| `R2-04` | `done` | Create first route pack from live primary sources. | The sanitized Russia → Georgia family/IE reference case has five linked route requirements, six official-source records, retrieval/freshness dates, explicit conditions, and a rendered dashboard. `validate_case.py` passed with 0 warnings on 2026-07-30. | `R2-01`, `R2-03` |
+| `R2-05` | `in_progress` | Add source refresh diff. | Rechecking a case identifies new, changed, unavailable, and stale sources. | `R2-02`, `R2-04` |
 
 ### R2 release gate
 
@@ -105,7 +105,7 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 | ID | Status | Work | Acceptance criteria | Depends on |
 | --- | --- | --- | --- | --- |
 | `R4-01` | `done` | Define executable action and receipt schema. | Actions encode dependencies, scope, consent class, official URL/provider, expected receipt, state, owner, and deadline. | `R1` |
-| `R4-02` | `blocked` | Add browser runbook protocol. | Domain verified before data entry; all irreversible controls stop for confirmation. | `R4-01`, `R2-04` |
+| `R4-02` | `done` | Add browser runbook protocol. | The Georgia reference case binds each browser target to an official source domain and action class; the runbook blocks data entry on a domain mismatch and requires current scoped consent before submission, booking, payment, messaging, or disclosure. | `R4-01`, `R2-04` |
 | `R4-03` | `planned` | Add appointment/provider workflow. | Search, comparison, user selection, booking confirmation, and reschedule/cancel states are distinguished. | `R3-04`, `R4-02` |
 | `R4-04` | `done` | Add action status and receipt verification. | A page opening cannot close an action; a receipt or reason is required. | `R4-01` |
 
@@ -158,3 +158,5 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 | 2026-07-30 | Completed `R2-03`: conflict protocol now preserves each official source and validator rejects a requirement that silently proceeds despite a conflict. Started `R4-01`; R2 route-pack work remains blocked on the reference corridor. |
 | 2026-07-30 | Completed `R4-01` and `R4-04` from the v2 action/receipt contract and validator; added generic browser runbook and started `R4-02`. |
 | 2026-07-30 | Marked `R4-02` blocked: generic protocol is implemented, but its required live route/domain verification depends on `R2-04`, which cannot begin without `DEC-PROD-001`. |
+| 2026-07-30 | Completed `R2-01`: the first reference corridor is Russia → Georgia for a family of three, with individual-entrepreneur registration as the intended economic step. Started `R2-04`; live primary-source research is in progress. |
+| 2026-07-30 | Completed `R2-04` and `R4-02`: added a sanitized, validated, source-linked Georgia reference case and exercised its dashboard. Started `R2-05` to make source freshness observable over time. |

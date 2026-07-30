@@ -3,4 +3,4 @@ __pycache__/
 .DS_Store
 /case/
 /evidence/
-/99-dashboard.md
+**/99-dashboard.md
