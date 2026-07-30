@@ -5,6 +5,7 @@ import { tmpdir } from "node:os";
 import { assertSafeCaseWrite, loadCase, parseFrontmatter, parseRecords, writeCaseText } from "../src/case-core";
 import { validateCase } from "../src/validate";
 import { migrateCase } from "../src/migrate";
+import { renderCase } from "../src/render";
 
 const cleanup: string[] = [];
 function fixture(): string {
@@ -160,5 +161,13 @@ describe("case core", () => {
     expect(Object.fromEntries(Object.keys(files).map(name => [name, readFileSync(join(source, name), "utf8")]))).toEqual(before);
     expect(validateCase(destination, new Date("2026-07-30T00:00:00Z")).ok).toBe(true);
     expect(readFileSync(join(destination, "98-migration-report.md"), "utf8")).toContain("Evidence files were not copied");
+  });
+
+  test("renders the stable Python-compatible dashboard headings", () => {
+    const caseDir = fixture();
+    const dashboard = readFileSync(renderCase(caseDir), "utf8");
+    expect(dashboard).toContain("Case: `CASE-001` · active · choose_route");
+    expect(dashboard).toContain("Landing lane: `pre_move (move date unknown)`");
+    expect(dashboard).toContain("This dashboard is generated. Update numbered source files, validate the case, then render again.");
   });
 });
