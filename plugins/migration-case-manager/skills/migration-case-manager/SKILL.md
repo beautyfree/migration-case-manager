@@ -10,7 +10,7 @@ Maintain one case folder as the source of truth. Do not substitute generic reloc
 ## Create or open a case
 
 1. Ask only for the minimum route facts: citizenship(s), current lawful location, destination, legal basis, family members, target date, and existing documents. Mark unknown facts as `unknown`; do not invent them.
-2. For a new case, run `scripts/create_case.py <case-directory>`. Keep evidence outside Git and never copy credentials, one-time codes, or raw identity documents into chat logs.
+2. Ensure the verified `migration-os` binary is available. On first use, present its exact version, release URL, checksum, and destination, then wait for the user's consent before invoking the bundled platform bootstrapper with its explicit confirmation flag. For a new case, run `migration-os init <case-directory>`. Keep evidence outside Git and never copy credentials, one-time codes, or raw identity documents into chat logs.
 3. Read `references/case-format.md` before editing a case. Preserve IDs, file ownership, consent scope, and the case schema version.
 4. Start with `00-case.md`, `10-people.md`, and `20-route-options.md`; then delegate rule discovery to `$migration-research` and executable work to `$migration-actions`.
 
@@ -23,27 +23,27 @@ Update only the designated source documents. Do not edit generated `99-dashboard
 Before saying a case is ready, run:
 
 ```bash
-python3 scripts/validate_case.py <case-directory>
-python3 scripts/render_case.py <case-directory>
+migration-os validate <case-directory>
+migration-os render <case-directory>
 ```
 
 To move a v1 case to v2, preserve the source and run:
 
 ```bash
-python3 scripts/migrate_case.py <v1-case-directory> <new-v2-case-directory>
+migration-os migrate <v1-case-directory> <new-v2-case-directory>
 ```
 
 ## Open the local Migration OS UI
 
-The local UI is Bun-native. From `apps/migration-os-ui`, use:
+Use the verified native runtime:
 
 ```bash
-bun run serve <case-directory>
-bun run status <case-directory>
-bun run stop <case-directory>
+migration-os serve <case-directory>
+migration-os status <case-directory>
+migration-os stop <case-directory>
 ```
 
-`serve` opens a token-protected UI bound only to `127.0.0.1`. It is a local daemon for one case, not a hosted service. Never expose its port or URL outside the user's machine. Maintainers can create a standalone executable with `bun run compile`; no Python runtime is used by the UI.
+`serve` opens a token-protected UI bound only to `127.0.0.1`. It is a local daemon for one case, not a hosted service. Never expose its port or URL outside the user's machine. The normal user flow requires no Python, Bun, Node, or npm.
 
 When the user asks to see, open, or test a visual case interface, launch this bundled Migration OS UI for the existing case. Do **not** create a replacement React application, website, mockup, or new UI project. First create or open the Markdown case, then run `serve`; it opens the browser automatically. The browser is a local view and request queue, while this agent remains responsible for researching and updating the case in response to the user's chat requests.
 

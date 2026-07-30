@@ -12,7 +12,7 @@ The core is shared by Codex and Claude Code. The platform-specific manifests onl
 - `migration-case-manager` — creates, coordinates, validates, and renders a case folder.
 - `migration-research` — verifies route-specific requirements from primary official sources.
 - `migration-actions` — turns verified work into browser and real-world actions with explicit consent boundaries.
-- Markdown case templates plus local `create_case.py`, `validate_case.py`, and `render_case.py` tools.
+- Markdown case templates plus a native, local-only `migration-os` runtime.
 - A sanitized, source-linked reference case for a Russian family temporarily moving to Georgia and considering an individual entrepreneur path: [`examples/georgia-russia-ie-family`](plugins/migration-case-manager/examples/georgia-russia-ie-family/README.md).
 
 When official sources conflict, preserve both `SRC-*` records, mark the source `conflicting`, and block the linked `REQ-*`; do not select whichever answer looks easier.
@@ -65,18 +65,17 @@ For a persistent marketplace installation, add this repository to a Claude Code 
 Create a case folder outside the plugin and outside version control containing sensitive evidence:
 
 ```bash
-python3 plugins/migration-case-manager/skills/migration-case-manager/scripts/create_case.py ~/migration-cases/brazil-dnv-2026
-python3 plugins/migration-case-manager/skills/migration-case-manager/scripts/validate_case.py ~/migration-cases/brazil-dnv-2026
-python3 plugins/migration-case-manager/skills/migration-case-manager/scripts/render_case.py ~/migration-cases/brazil-dnv-2026
-python3 plugins/migration-case-manager/skills/migration-case-manager/scripts/refresh_sources.py ~/migration-cases/brazil-dnv-2026
-python3 plugins/migration-case-manager/skills/migration-case-manager/scripts/document_dates.py ~/migration-cases/brazil-dnv-2026
-python3 plugins/migration-case-manager/skills/migration-case-manager/scripts/document_quality.py ~/migration-cases/brazil-dnv-2026
-python3 plugins/migration-case-manager/skills/migration-case-manager/scripts/create_provider_comparison.py ~/migration-cases/brazil-dnv-2026 ACT-001 --service "certified translator" --city Tbilisi
-python3 plugins/migration-case-manager/skills/migration-case-manager/scripts/logistics_readiness.py ~/migration-cases/brazil-dnv-2026
-python3 plugins/migration-case-manager/skills/migration-case-manager/scripts/arrival_phase.py ~/migration-cases/brazil-dnv-2026
-python3 plugins/migration-case-manager/skills/migration-case-manager/scripts/create_resilience_branch.py ~/migration-cases/brazil-dnv-2026 dependent --owner PERSON-003
-python3 plugins/migration-case-manager/skills/migration-case-manager/scripts/retrospective_readiness.py ~/migration-case-retrospectives
-bun --cwd plugins/migration-case-manager/apps/migration-os-ui run serve ~/migration-cases/brazil-dnv-2026
+migration-os init ~/migration-cases/brazil-dnv-2026
+migration-os validate ~/migration-cases/brazil-dnv-2026
+migration-os render ~/migration-cases/brazil-dnv-2026
+migration-os sources refresh ~/migration-cases/brazil-dnv-2026
+migration-os document dates ~/migration-cases/brazil-dnv-2026
+migration-os document quality ~/migration-cases/brazil-dnv-2026
+migration-os provider comparison ~/migration-cases/brazil-dnv-2026 ACT-001 --service "certified translator" --city Tbilisi
+migration-os logistics readiness ~/migration-cases/brazil-dnv-2026
+migration-os arrival phase ~/migration-cases/brazil-dnv-2026
+migration-os branch create ~/migration-cases/brazil-dnv-2026 dependent --owner PERSON-003
+migration-os serve ~/migration-cases/brazil-dnv-2026
 ```
 
 The generated case contains numbered Markdown source files. `99-dashboard.md` is derived output; update the source files and render again rather than editing it.
@@ -85,7 +84,7 @@ The future local UI is governed by a [read-only renderer contract](plugins/migra
 
 The bundled reference case is deliberately incomplete where a legal conclusion depends on personal facts. It shows the operational distinction between entry/stay, IE registration, tax status, a work residence permit, and family reunification; copy records into a private case rather than editing the example.
 
-`refresh_sources.py` records only public URLs, retrieval dates, and content hashes in the ignored `.migration-os/source-state.json`. Its first run reports sources as `new`; subsequent runs detect changed pages, fetch failures, and source records past `Fresh until`.
+`migration-os sources refresh` records only public URLs, retrieval dates, and content hashes in the ignored `.migration-os/source-state.json`. Its first run reports sources as `new`; subsequent runs detect changed pages, fetch failures, and source records past `Fresh until`.
 
 ## Safety model
 
@@ -100,8 +99,8 @@ Do not put originals, passwords, one-time codes, passport numbers, bank details,
 ## Development checks
 
 ```bash
-python3 plugins/migration-case-manager/skills/migration-case-manager/scripts/validate_case.py <case-directory>
-python3 plugins/migration-case-manager/skills/migration-case-manager/scripts/render_case.py <case-directory>
+bun --cwd plugins/migration-case-manager/apps/migration-os-ui run test
+bun --cwd plugins/migration-case-manager/apps/migration-os-ui run compile
 ```
 
 For Claude Code development, test the same plugin with:

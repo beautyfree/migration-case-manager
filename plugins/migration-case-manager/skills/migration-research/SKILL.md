@@ -31,4 +31,4 @@ Before returning research:
 
 ## Refresh existing research
 
-Before relying on an existing route pack, run `../migration-case-manager/scripts/refresh_sources.py <case-directory>`. It stores only public-page hashes in the ignored `.migration-os/source-state.json` file and reports `new`, `changed`, `unavailable`, and `stale` source records. A changed or unavailable source invalidates any legal conclusion drawn from the prior page: inspect it, update the `SRC-*` record and affected `REQ-*` records, then render the dashboard again.
+Before relying on an existing route pack, run `migration-os sources refresh <case-directory>`. It stores only public-page hashes in the ignored `.migration-os/source-state.json` file and reports `new`, `changed`, `unavailable`, and `stale` source records. A changed or unavailable source invalidates any legal conclusion drawn from the prior page: inspect it, update the `SRC-*` record and affected `REQ-*` records, then render the dashboard again.
