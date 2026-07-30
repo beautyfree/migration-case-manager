@@ -31,6 +31,6 @@ This runbook is for maintainers only. Never commit certificates, private keys, n
 
 ## GitHub Actions and npm OIDC
 
-Preview tags named `vX.Y.Z-preview.N` run `.github/workflows/native-artifacts.yml`. After the full standalone matrix passes, it creates a prerelease and publishes the matching `@beautyfree/migration-os` package to npm's `next` dist-tag using GitHub Actions OIDC. The workflow contains no npm token.
+Preview tags named `vX.Y.Z-preview.N` run `.github/workflows/native-artifacts.yml`. After the full standalone matrix passes, it creates a prerelease and publishes the matching `migration-os` package to npm's `next` dist-tag using GitHub Actions OIDC. The workflow contains no npm token.
 
 Before the first OIDC publication, an npm owner must create the package once and configure its trusted publisher for GitHub repository `beautyfree/migration-case-manager`, workflow file `native-artifacts.yml`, and the `npm publish` action. This bootstrap is required because npm cannot attach a trusted publisher to a package that does not yet exist.
