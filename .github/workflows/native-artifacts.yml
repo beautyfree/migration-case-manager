@@ -67,3 +67,57 @@ jobs:
       - run: bun run build
       - run: bun run scripts/build-standalone.ts --target ${{ matrix.target }} --output release/${{ matrix.artifact }}
       - run: bun run scripts/smoke-standalone.ts release/${{ matrix.artifact }}
+
+  publish-preview-release:
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && contains(github.ref_name, '-preview.')
+    needs: [build, native-smoke]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          name: migration-os-native-${{ github.sha }}
+          path: release
+      - name: Verify tag matches npx launcher version
+        run: |
+          package_version="$(node -p 'require("./packages/migration-os/package.json").version')"
+          test "$GITHUB_REF_NAME" = "v$package_version"
+      - name: Refuse to mutate an existing release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release $GITHUB_REF_NAME already exists; preview releases are immutable."
+            exit 1
+          fi
+      - name: Create preview release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" release/* --repo "$GITHUB_REPOSITORY" --verify-tag --prerelease --title "Migration OS $GITHUB_REF_NAME preview" --notes-file docs/preview-release-notes.md
+
+  publish-npm-preview:
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && contains(github.ref_name, '-preview.')
+    needs: publish-preview-release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+      - name: Verify tag matches npx launcher version
+        run: |
+          package_version="$(node -p 'require("./packages/migration-os/package.json").version')"
+          test "$GITHUB_REF_NAME" = "v$package_version"
+      - run: node --test packages/migration-os/test/*.test.mjs
+      - run: npm pack --dry-run ./packages/migration-os
+      - name: Publish with npm trusted publishing
+        working-directory: packages/migration-os
+        run: npm publish --access public --tag next

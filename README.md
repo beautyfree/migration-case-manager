@@ -69,11 +69,11 @@ On its first use, the skill previews the platform-matched, version-pinned native
 
 ### Optional `npx` shortcut
 
-After a matching GitHub Release and npm package version are published, users who already have Node.js 20+ may use the small launcher instead of invoking the platform bootstrap script manually:
+After a matching GitHub Release and npm package version are published, users who already have Node.js 20+ may use the small launcher instead of invoking the platform bootstrap script manually. The first public build is deliberately a preview:
 
 ```bash
-npx @beautyfree/migration-os --release v0.1.0 --yes-download doctor
-npx @beautyfree/migration-os --release v0.1.0 init ~/migration-cases/example
+npx @beautyfree/migration-os@0.1.0-preview.1 --release v0.1.0-preview.1 --yes-download doctor
+npx @beautyfree/migration-os@0.1.0-preview.1 --release v0.1.0-preview.1 init ~/migration-cases/example
 ```
 
 The launcher is not a second JavaScript runtime. It downloads the same platform-matched native binary, checks its release SHA-256, runs `doctor` before activation, and forwards the remaining command. Without `--yes-download`, it only previews the exact download and checksum. It is optional: a machine without Node continues to use the native plugin bootstrap path.

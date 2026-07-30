@@ -7,7 +7,7 @@ import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
 const releaseBase = process.env.MIGRATION_OS_RELEASE_BASE ?? "https://github.com/beautyfree/migration-case-manager/releases/download";
-const packageVersion = "0.1.0";
+const packageVersion = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8")).version;
 
 export function assertRelease(version, base = releaseBase) {
   if (!/^v\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?$/.test(version)) throw new Error("BINARY_INVALID_RELEASE_VERSION: expected a versioned vX.Y.Z release tag");

@@ -1,6 +1,6 @@
 {
   "name": "@beautyfree/migration-os",
-  "version": "0.1.0",
+  "version": "0.1.0-preview.1",
   "description": "Consent-first npx launcher for the Migration OS native runtime.",
   "license": "UNLICENSED",
   "type": "module",
