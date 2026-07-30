@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "scripts": {"build": "vite build", "serve": "bun run src/cli.ts serve", "status": "bun run src/cli.ts status", "stop": "bun run src/cli.ts stop", "compile": "bun run scripts/build-standalone.ts", "check:contract": "bun run scripts/check-contract.ts", "test": "bun test"},
+  "scripts": {"build": "vite build", "serve": "bun run src/cli.ts serve", "status": "bun run src/cli.ts status", "stop": "bun run src/cli.ts stop", "compile": "bun run scripts/build-standalone.ts", "build:release": "bun run scripts/build-release.ts", "check:contract": "bun run scripts/check-contract.ts", "test": "bun test"},
   "dependencies": {"@vitejs/plugin-react": "latest", "vite": "latest", "react": "latest", "react-dom": "latest"},
   "devDependencies": {}
 }

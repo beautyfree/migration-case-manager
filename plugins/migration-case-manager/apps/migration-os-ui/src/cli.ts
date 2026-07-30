@@ -49,6 +49,11 @@ async function serve(caseDir: string, noBrowser: boolean) {
 }
 function usage() { console.log(JSON.stringify({ ok:false, command:"migration-os", error:{ code:"CASE_INVALID", message:"missing or unsupported command" }, fix:"Run migration-os doctor or consult the installed plugin for the supported command tree.", next_actions:[] })); }
 const [command, target, ...flags] = process.argv.slice(2);
+if (command === "doctor") {
+  const browserCommands = process.platform === "darwin" ? ["open"] : process.platform === "win32" ? ["cmd"] : ["xdg-open"];
+  const browser = browserCommands.find(item => Bun.which(item));
+  console.log(JSON.stringify({ ok:true, command:"migration-os doctor", result:{ binary:process.execPath, platform:process.platform, architecture:process.arch, loopback_only:true, browser_launcher:browser ?? null, runtime_state:".migration-os", network_policy:"disabled_except_sources_refresh" }, next_actions:[{ command:"migration-os init <case-directory>", description:"Create a local Markdown case." }] })); process.exit();
+}
 function report(commandName: string, execute: () => unknown) {
   try { console.log(JSON.stringify({ ok:true, command:commandName, result:execute(), next_actions:[] })); }
   catch (error) { console.log(JSON.stringify({ ok:false, command:commandName, error:{ code:"CASE_INVALID", message:error instanceof Error ? error.message : "operation failed" }, fix:"Check the case path and command inputs, then retry.", next_actions:[] })); process.exitCode = 1; }
