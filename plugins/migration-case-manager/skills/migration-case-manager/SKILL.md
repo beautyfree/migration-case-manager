@@ -45,6 +45,8 @@ bun run stop <case-directory>
 
 `serve` opens a token-protected UI bound only to `127.0.0.1`. It is a local daemon for one case, not a hosted service. Never expose its port or URL outside the user's machine. Maintainers can create a standalone executable with `bun run compile`; no Python runtime is used by the UI.
 
+When the user asks to see, open, or test a visual case interface, launch this bundled Migration OS UI for the existing case. Do **not** create a replacement React application, website, mockup, or new UI project. First create or open the Markdown case, then run `serve`; it opens the browser automatically. The browser is a local view and request queue, while this agent remains responsible for researching and updating the case in response to the user's chat requests.
+
 Report missing evidence, stale sources, unresolved decisions, and actions requiring the person's confirmation. Never call a visa outcome, entry, or legal eligibility guaranteed.
 
 ## Required safety boundaries
