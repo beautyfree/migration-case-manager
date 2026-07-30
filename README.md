@@ -44,21 +44,24 @@ After the new task starts, ask it to use `migration-case-manager` explicitly if 
 
 ## Install in Claude Code
 
-Clone the repository and load the plugin root directly:
+Add the marketplace and install the plugin once for your user account:
 
 ```bash
-git clone https://github.com/beautyfree/migration-case-manager.git
-cd migration-case-manager
-claude --plugin-dir ./plugins/migration-case-manager
+claude plugin marketplace add beautyfree/migration-case-manager
+claude plugin install migration-case-manager@migration-case-manager
 ```
 
-Claude exposes the skills under the `migration-case-manager` namespace. Test with:
+Run `/reload-plugins` in an existing Claude Code session (or start a new session). Claude exposes the skills under the `migration-case-manager` namespace. Test with:
 
 ```text
 /migration-case-manager:migration-case-manager
 ```
 
-For a persistent marketplace installation, add this repository to a Claude Code marketplace once a Claude marketplace manifest is published. The local `--plugin-dir` path above is the supported, reproducible installation path today.
+For one-off local development, the direct path remains available:
+
+```bash
+claude --plugin-dir ./plugins/migration-case-manager
+```
 
 ## Use a case
 

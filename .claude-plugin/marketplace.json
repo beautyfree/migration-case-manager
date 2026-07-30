@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "migration-case-manager",
+  "version": "0.1.0",
+  "description": "Portable Markdown-first migration planning and execution tools.",
+  "owner": {
+    "name": "beautyfree",
+    "url": "https://github.com/beautyfree"
+  },
+  "plugins": [
+    {
+      "name": "migration-case-manager",
+      "version": "0.1.0",
+      "description": "Create, research, and safely execute a source-backed migration case.",
+      "author": {
+        "name": "beautyfree"
+      },
+      "source": "./plugins/migration-case-manager",
+      "category": "productivity",
+      "homepage": "https://github.com/beautyfree/migration-case-manager"
+    }
+  ]
+}

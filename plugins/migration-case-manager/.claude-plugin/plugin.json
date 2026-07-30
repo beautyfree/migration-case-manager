@@ -4,5 +4,7 @@
   "description": "Portable Markdown-first migration case planning and execution.",
   "author": {
     "name": "beautyfree"
-  }
+  },
+  "homepage": "https://github.com/beautyfree/migration-case-manager",
+  "repository": "https://github.com/beautyfree/migration-case-manager"
 }
