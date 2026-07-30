@@ -13,8 +13,8 @@ This runbook is for maintainers only. Never commit certificates, private keys, n
 
 1. Sign each Darwin artifact with the Developer ID Application identity and hardened runtime settings appropriate for the standalone executable.
 2. Verify with `codesign --verify --deep --strict --verbose=2 <artifact>` and inspect the signing identity.
-3. Submit each artifact to Apple notarization, wait for an `Accepted` result, and staple the ticket.
-4. Re-run `codesign` verification and `spctl --assess --type execute --verbose <artifact>` on a clean macOS account.
+3. Submit each artifact to Apple notarization and wait for an `Accepted` result. Stapling is supported for app bundles, DMGs, and PKGs; a bare executable has no staple target and Gatekeeper obtains its ticket online.
+4. Re-run `codesign` verification and perform the downloaded-binary launch journey on a clean macOS account. `spctl --assess --type execute` may reject a valid bare executable because it is not an app bundle, so it is diagnostic evidence rather than the release decision for this artifact shape.
 
 ## Windows
 
