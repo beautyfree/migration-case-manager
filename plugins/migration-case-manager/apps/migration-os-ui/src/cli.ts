@@ -3,29 +3,16 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { embeddedAssets } from "./embedded-assets";
+import { appendJsonLine, caseFile, loadCase, readCaseText, readJsonLines, runtimePath } from "./case-core";
 
 const cookieName = "migration_os_session";
 const root = resolve(import.meta.dir, "..");
-type RecordItem = { id: string; title: string; fields: Record<string, string> };
-
-function parseMeta(text: string) { const hit = text.match(/^---\n([\s\S]*?)\n---/); return Object.fromEntries((hit?.[1] ?? "").split("\n").filter(x => x.includes(":" )).map(x => x.split(/:(.*)/s).slice(0, 2).map(s => s.trim()))); }
-function parseRecords(text: string): RecordItem[] {
-  const hits = [...text.matchAll(/^##\s+((?:PERSON|ROUTE|SRC|REQ|DOC|ACT|MILESTONE|LOG|DEC|EVD|APPT)-\d{3,})\s+—\s+(.+)$/gm)];
-  return hits.map((hit, i) => { const body = text.slice(hit.index! + hit[0].length, hits[i + 1]?.index); const fields = Object.fromEntries([...body.matchAll(/^- ([^:]+):\s*(.+)$/gm)].map(x => [x[1].trim(), x[2].trim()])); return { id: hit[1], title: hit[2], fields }; });
-}
-function payload(caseDir: string) {
-  const caseFile = join(caseDir, "00-case.md"); if (!existsSync(caseFile)) throw new Error(`missing case file: ${caseFile}`);
-  const meta = parseMeta(readFileSync(caseFile, "utf8"));
-  const files: Record<string, string> = { requirements:"30-requirements.md", documents:"40-documents.md", actions:"50-actions.md", timeline:"60-timeline.md", appointments:"65-appointments.md", landing:"70-finance-logistics.md", decisions:"80-decisions.md" };
-  return { case: { case_id: meta.case_id ?? "unknown", case_status: meta.case_status ?? "unknown", phase: meta.phase ?? "unknown", case_path: caseDir }, collections: Object.fromEntries(Object.entries(files).map(([name, file]) => { const path = join(caseDir, file); return [name, existsSync(path) ? parseRecords(readFileSync(path, "utf8")) : []]; })) };
-}
-function statePath(caseDir: string) { return join(caseDir, ".migration-os", "ui-session.json"); }
-function requestPath(caseDir: string) { return join(caseDir, ".migration-os", "requests.jsonl"); }
-function eventPath(caseDir: string) { return join(caseDir, ".migration-os", "events.jsonl"); }
-function readJsonLines(path: string) { return existsSync(path) ? readFileSync(path, "utf8").trim().split("\n").filter(Boolean).map(line => JSON.parse(line)) : []; }
-function appendJsonLine(path: string, entry: object) { mkdirSync(dirname(path), { recursive:true }); writeFileSync(path, JSON.stringify(entry) + "\n", { encoding:"utf8", flag:"a" }); }
+const payload = loadCase;
+function statePath(caseDir: string) { return runtimePath(caseDir, "ui-session.json"); }
+function requestPath(caseDir: string) { return runtimePath(caseDir, "requests.jsonl"); }
+function eventPath(caseDir: string) { return runtimePath(caseDir, "events.jsonl"); }
 function acceptDecision(caseDir: string, id: string) {
-  if (!/^DEC-\d{3,}$/.test(id)) throw new Error("invalid decision ID"); const path = join(caseDir, "80-decisions.md"); const text = readFileSync(path, "utf8");
+  if (!/^DEC-\d{3,}$/.test(id)) throw new Error("invalid decision ID"); const path = caseFile(caseDir, "decisions"); const text = readCaseText(caseDir, "decisions");
   const match = text.match(new RegExp(`(## ${id}[^\\n]*[\\s\\S]*?\\n- Status:) proposed(\\n)`)); if (!match) throw new Error("decision is not an existing proposed record");
   writeFileSync(path, text.replace(match[0], `${match[1]} accepted${match[2]}`), "utf8"); appendJsonLine(eventPath(caseDir), { kind:"decision_accepted", decision_id:id, at:new Date().toISOString() });
 }
