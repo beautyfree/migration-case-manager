@@ -28,6 +28,10 @@ QUALITY_SPEC = importlib.util.spec_from_file_location("document_quality", SCRIPT
 assert QUALITY_SPEC and QUALITY_SPEC.loader
 QUALITY = importlib.util.module_from_spec(QUALITY_SPEC)
 QUALITY_SPEC.loader.exec_module(QUALITY)
+LOGISTICS_SPEC = importlib.util.spec_from_file_location("logistics_readiness", SCRIPTS / "logistics_readiness.py")
+assert LOGISTICS_SPEC and LOGISTICS_SPEC.loader
+LOGISTICS = importlib.util.module_from_spec(LOGISTICS_SPEC)
+LOGISTICS_SPEC.loader.exec_module(LOGISTICS)
 
 
 def run(script: str, *args: Path, expected: int = 0) -> subprocess.CompletedProcess[str]:
@@ -144,6 +148,27 @@ class CaseToolsTest(unittest.TestCase):
             case = Path(temp) / "case"
             run("create_case.py", case)
             append(case / "10-people.md", "\n- Password: must-not-appear\n")
+            result = run("validate_case.py", case, expected=1)
+            self.assertIn("possible sensitive value", result.stdout)
+
+    def test_logistics_readiness_reports_missing_core_areas_without_financial_data(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            case = Path(temp) / "case"
+            run("create_case.py", case)
+            append(case / "70-finance-logistics.md", """
+## LOG-001 — Synthetic housing work
+
+- Area: housing
+- Status: researching
+- Applies to: PERSON-001
+- Actions: none
+- Decision: none
+- Notes: compare lease terms after city selection.
+""")
+            lines = LOGISTICS.report(case)
+            self.assertIn("missing core area: insurance", lines)
+            self.assertTrue(any("LOG-001: housing; researching" in line for line in lines))
+            append(case / "70-finance-logistics.md", "\n- Balance: must-not-appear\n")
             result = run("validate_case.py", case, expected=1)
             self.assertIn("possible sensitive value", result.stdout)
 

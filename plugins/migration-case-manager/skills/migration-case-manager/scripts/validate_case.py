@@ -11,13 +11,13 @@ from pathlib import Path
 REQUIRED_FILES = (
     "00-case.md", "10-people.md", "20-route-options.md", "30-requirements.md",
     "40-documents.md", "50-actions.md", "60-timeline.md", "70-finance-logistics.md",
-    "80-decisions.md", "90-evidence-index.md", "95-readiness-report.md",
+    "65-appointments.md", "80-decisions.md", "90-evidence-index.md", "95-readiness-report.md",
 )
 OWNER_FILE = {
     "PERSON": "10-people.md", "ROUTE": "20-route-options.md", "SRC": "30-requirements.md",
     "REQ": "30-requirements.md", "DOC": "40-documents.md", "ACT": "50-actions.md",
     "MILESTONE": "60-timeline.md", "LOG": "70-finance-logistics.md", "DEC": "80-decisions.md",
-    "EVD": "90-evidence-index.md",
+    "EVD": "90-evidence-index.md", "APPT": "65-appointments.md",
 }
 REQUIRED_FIELDS = {
     "PERSON": {"Role", "Citizenship", "Current lawful location", "Participation"},
@@ -30,6 +30,7 @@ REQUIRED_FIELDS = {
     "LOG": {"Area", "Status", "Applies to", "Actions", "Decision", "Notes"},
     "DEC": {"Decision maker", "Status", "Scope", "Options considered", "Chosen option", "Decided", "Expires", "Linked records"},
     "EVD": {"Kind", "Owner", "Storage reference", "Verified", "Status", "Supports"},
+    "APPT": {"Service", "Provider comparison", "Selected provider", "Participants", "Scheduled for", "Status", "Action", "Decision", "Receipt", "Rescheduled from", "Cancellation reason"},
 }
 STATUS = {
     "REQ": {"unknown", "researching", "needs_evidence", "in_progress", "ready", "submitted", "blocked", "not_applicable"},
@@ -38,11 +39,13 @@ STATUS = {
     "DEC": {"proposed", "accepted", "superseded", "expired", "rejected"},
     "SRC": {"current", "needs_recheck", "conflicting", "unavailable", "superseded"},
     "ROUTE": {"candidate", "researching", "viable", "not_viable", "selected", "rejected"},
+    "APPT": {"researching", "candidate_selected", "booking_pending", "confirmed", "reschedule_requested", "rescheduled", "cancel_requested", "cancelled", "completed"},
+    "LOG": {"not_started", "researching", "waiting_on_user", "ready", "blocked", "not_applicable", "completed"},
 }
 DATE_FIELDS = {"Retrieved", "Updated", "Fresh until", "Issued", "Expires", "Deadline", "Date", "Decided", "Expires"}
-SENSITIVE = re.compile(r"(?i)(password|passcode|one.time.code|passport[_ -]?number|card[_ -]?number|recovery[_ -]?code)\s*[:=]")
-HEADING = re.compile(r"^##\s+((PERSON|ROUTE|SRC|REQ|DOC|ACT|MILESTONE|LOG|DEC|EVD)-\d{3,})\b.*$", re.MULTILINE)
-ID_REF = re.compile(r"\b(?:PERSON|ROUTE|SRC|REQ|DOC|ACT|MILESTONE|LOG|DEC|EVD)-\d{3,}\b")
+SENSITIVE = re.compile(r"(?i)(password|passcode|one.time.code|passport[_ -]?number|card[_ -]?number|recovery[_ -]?code|iban|account[_ -]?number|wallet[_ -]?address|bank[_ -]?details|balance)\s*[:=]")
+HEADING = re.compile(r"^##\s+((PERSON|ROUTE|SRC|REQ|DOC|ACT|MILESTONE|LOG|DEC|EVD|APPT)-\d{3,})\b.*$", re.MULTILINE)
+ID_REF = re.compile(r"\b(?:PERSON|ROUTE|SRC|REQ|DOC|ACT|MILESTONE|LOG|DEC|EVD|APPT)-\d{3,}\b")
 FIELD = re.compile(r"^- ([^:]+):\s*(.+)$", re.MULTILINE)
 FRONTMATTER = re.compile(r"^---\n(.*?)\n---\n?", re.DOTALL)
 DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
@@ -193,6 +196,8 @@ def main() -> int:
                     errors.append(f"{identifier} has invalid {field_name}: {value}")
             if fields.get("Status") == "ready" and any(value not in {"pass", "not_applicable"} for value in quality.values()):
                 errors.append(f"{identifier} is ready without a passed document quality gate")
+        if prefix == "LOG" and fields.get("Area") not in {"insurance", "housing", "connectivity", "transport", "cash", "banking", "school", "pets", "other"}:
+            errors.append(f"{identifier} has invalid Area: {fields.get('Area')}")
         if prefix == "REQ":
             conflict = fields.get("Conflict")
             if conflict not in {"none", "needs_reconciliation"}:
@@ -214,6 +219,24 @@ def main() -> int:
                     decision_ids = ID_REF.findall(fields.get("Decision", ""))
                     if not decision_ids or not any(headers.get(item, ("", "", {}))[2].get("Status") == "accepted" for item in decision_ids):
                         errors.append(f"{identifier} completed without accepted decision")
+        if prefix == "APPT":
+            status = fields.get("Status")
+            if status in {"confirmed", "completed", "rescheduled"}:
+                if fields.get("Selected provider") in {"", "unknown"}:
+                    errors.append(f"{identifier} {status} without selected provider")
+                if fields.get("Scheduled for") in {"", "unknown"}:
+                    errors.append(f"{identifier} {status} without scheduled time")
+            if status in {"confirmed", "completed"}:
+                decision_ids = ID_REF.findall(fields.get("Decision", ""))
+                receipt_ids = ID_REF.findall(fields.get("Receipt", ""))
+                if not any(headers.get(item, ("", "", {}))[2].get("Status") == "accepted" for item in decision_ids):
+                    errors.append(f"{identifier} {status} without accepted decision")
+                if not any(item.startswith("EVD-") for item in receipt_ids):
+                    errors.append(f"{identifier} {status} without EVD receipt")
+            if status == "rescheduled" and not any(item.startswith("APPT-") for item in ID_REF.findall(fields.get("Rescheduled from", ""))):
+                errors.append(f"{identifier} rescheduled without prior appointment")
+            if status == "cancelled" and fields.get("Cancellation reason") in {"", "unknown", "none"}:
+                errors.append(f"{identifier} cancelled without reason")
     readiness = frontmatter(all_text.get("95-readiness-report.md", "")) or {}
     readiness_status = readiness.get("status")
     assessed_at = readiness.get("assessed_at", "unknown")
