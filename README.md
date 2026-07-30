@@ -40,7 +40,7 @@ codex plugin remove migration-case-manager@migration-case-manager
 codex plugin add migration-case-manager@migration-case-manager
 ```
 
-After the new task starts, ask it to use `migration-case-manager` explicitly if the request is ambiguous. The skill includes the bundled Bun-based Migration OS UI; it must not create a replacement UI.
+After the new task starts, ask it to use `migration-case-manager` explicitly if the request is ambiguous. The skill uses the bundled local Migration OS UI; it must not create a replacement UI.
 
 ## Install in Claude Code
 
@@ -61,6 +61,8 @@ Claude exposes the skills under the `migration-case-manager` namespace. Test wit
 For a persistent marketplace installation, add this repository to a Claude Code marketplace once a Claude marketplace manifest is published. The local `--plugin-dir` path above is the supported, reproducible installation path today.
 
 ## Use a case
+
+On its first use, the skill previews the platform-matched, version-pinned native download (release URL, SHA-256, and destination) and waits for consent. It then verifies the artifact and its `doctor` result before activation; Python, Node, Bun, and npm are not user runtime requirements.
 
 Create a case folder outside the plugin and outside version control containing sensitive evidence:
 

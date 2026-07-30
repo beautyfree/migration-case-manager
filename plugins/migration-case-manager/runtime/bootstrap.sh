@@ -4,6 +4,8 @@ set -eu
 version=${MIGRATION_OS_VERSION:?Set MIGRATION_OS_VERSION to the release tag, for example v0.1.0.}
 base=${MIGRATION_OS_RELEASE_BASE:-https://github.com/beautyfree/migration-case-manager/releases/download}
 confirm=${1:-}
+case "$version" in v[0-9]*.[0-9]*.[0-9]*) ;; *) printf '%s\n' "BINARY_INVALID_RELEASE_VERSION: expected a versioned vX.Y.Z release tag" >&2; exit 2 ;; esac
+case "$base" in https://*) ;; *) printf '%s\n' "BINARY_INVALID_RELEASE_BASE: release downloads must use HTTPS" >&2; exit 2 ;; esac
 os=$(uname -s); arch=$(uname -m)
 case "$os/$arch" in
   Darwin/arm64) artifact=migration-os-darwin-arm64 ;;
@@ -15,19 +17,20 @@ esac
 dest=${MIGRATION_OS_HOME:-"$HOME/.local/share/migration-os"}
 url="$base/$version/$artifact"
 checksums="$base/$version/checksums.txt"
+expected=$(curl --fail --location --proto '=https' --tlsv1.2 --connect-timeout 20 --max-time 30 "$checksums" | awk -v file="$artifact" '$2 == file {print $1}')
+[ -n "$expected" ] || { printf '%s\n' "BINARY_CHECKSUM_MISMATCH: artifact is absent from checksums.txt" >&2; exit 1; }
+printf '%s' "$expected" | grep -Eq '^[[:xdigit:]]{64}$' || { printf '%s\n' "BINARY_CHECKSUM_MISMATCH: checksum is not a SHA-256 value" >&2; exit 1; }
 if [ "$confirm" != "--yes-download" ]; then
-  printf '%s\n' "Consent required. Would download $url, verify against $checksums, then install to $dest/$artifact. Re-run with --yes-download after user approval."
+  printf '%s\n' "Consent required. Release $version would download $url, verify SHA-256 $expected from $checksums, run doctor, then install to $dest/$artifact. Re-run with --yes-download after user approval."
   exit 3
 fi
 mkdir -p "$dest"
 tmp=$(mktemp "$dest/.${artifact}.XXXXXX")
 trap 'rm -f "$tmp"' EXIT HUP INT TERM
 curl --fail --location --proto '=https' --tlsv1.2 --connect-timeout 20 --max-time 120 -o "$tmp" "$url"
-expected=$(curl --fail --location --proto '=https' --tlsv1.2 --connect-timeout 20 --max-time 30 "$checksums" | awk -v file="$artifact" '$2 == file {print $1}')
-[ -n "$expected" ] || { printf '%s\n' "BINARY_CHECKSUM_MISMATCH: artifact is absent from checksums.txt" >&2; exit 1; }
 if command -v shasum >/dev/null 2>&1; then actual=$(shasum -a 256 "$tmp" | awk '{print $1}'); else actual=$(sha256sum "$tmp" | awk '{print $1}'); fi
 [ "$actual" = "$expected" ] || { printf '%s\n' "BINARY_CHECKSUM_MISMATCH: downloaded file was not installed" >&2; exit 1; }
 chmod 700 "$tmp"
+"$tmp" doctor
 mv -f "$tmp" "$dest/$artifact"
 trap - EXIT HUP INT TERM
-"$dest/$artifact" doctor

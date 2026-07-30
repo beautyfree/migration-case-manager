@@ -26,6 +26,7 @@ jobs:
       - run: bun install --frozen-lockfile
       - run: bun run test
       - run: bun run check:contract
+      - run: sh ../../runtime/test-bootstrap.sh
       - run: bun run build
       - run: bun run build:release -- release
       - run: ./release/migration-os-linux-x64 doctor
