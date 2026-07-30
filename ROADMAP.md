@@ -33,10 +33,10 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 | Field | Value |
 | --- | --- |
 | Product phase | R7 — Local web application |
-| Current item | `R7-05` |
+| Current item | `R7-06` |
 | Current status | `in_progress` |
-| Next concrete outcome | Add a narrow, validated local mutation path for decisions/statuses without bypassing external-action confirmation. |
-| Primary blocker | None. The UI must never become a general-purpose Markdown editor. |
+| Next concrete outcome | Run the complete Georgia case flow through the local Bun UI and capture its safety evidence. |
+| Primary blocker | None. The end-to-end check must stop before an irreversible external action. |
 | Canonical case data | Markdown case folder outside the plugin and outside Git. |
 | Current repository | `https://github.com/beautyfree/migration-case-manager` |
 
@@ -140,8 +140,8 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 | `R7-02` | `done` | Package React app and local server launcher. | Prebuilt React/Vite assets are packaged in the plugin; Bun-native CLI `serve` binds `127.0.0.1` on an ephemeral port, boots a 256-bit token session, uses HttpOnly SameSite cookie bootstrap, and writes ignored local runtime state. It can compile to a standalone executable; no Python or Node runtime is needed by the user. | `R7-01` |
 | `R7-03` | `done` | Implement read-only case API and live React views. | Token-protected `/api/data` exposes only parsed case metadata/records; React shows routes/source freshness, documents, consent actions, timeline, appointments, and landing records. Live Georgia check proved 403 without cookie and data access after token bootstrap. | `R7-02` |
 | `R7-04` | `done` | Add agent request bridge. | UI POST creates a bounded local request in ignored JSONL; Bun CLI lists/claims/completes it and event log preserves handoff. Live Georgia test queued and retrieved a provider-research request without external effect. | `R7-03` |
-| `R7-05` | `in_progress` | Add consent-safe mutations. | Scoped UI actions create validated case records; confirmation-required actions stop before external effects. | `R7-04` |
-| `R7-06` | `planned` | Run Georgia end-to-end local UI verification. | User-path test opens the family/IE case, refreshes sources, creates provider research request, receives comparison, and stops before an irreversible action. | `R7-02`–`R7-05` |
+| `R7-05` | `done` | Add consent-safe mutations. | UI exposes only acceptance of an existing proposed `DEC-*` after displaying its exact scope and browser confirmation. Bun updates that decision and appends an event; it never executes an external action. Bundle, standalone compile, and contract suite pass. | `R7-04` |
+| `R7-06` | `in_progress` | Run Georgia end-to-end local UI verification. | User-path test opens the family/IE case, refreshes sources, creates provider research request, receives comparison, and stops before an irreversible action. | `R7-02`–`R7-05` |
 
 ### R7 release gate
 
@@ -200,3 +200,4 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 | 2026-07-30 | Completed `R7-03`: live case API and React records views are token-protected and manually exercised on the Georgia case. Started `R7-04`. |
 | 2026-07-30 | Architecture correction by user: replaced Python local-app runtime with Bun CLI/daemon and standalone compilation path. |
 | 2026-07-30 | Completed `R7-04`: live local UI request was persisted and read by Bun agent CLI with no external action. Started `R7-05`. |
+| 2026-07-30 | Completed `R7-05`: scoped decision acceptance is the only browser mutation; no external action is wired to it. Started `R7-06`. |

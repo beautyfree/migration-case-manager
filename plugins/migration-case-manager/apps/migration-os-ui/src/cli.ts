@@ -16,7 +16,7 @@ function parseRecords(text: string): RecordItem[] {
 function payload(caseDir: string) {
   const caseFile = join(caseDir, "00-case.md"); if (!existsSync(caseFile)) throw new Error(`missing case file: ${caseFile}`);
   const meta = parseMeta(readFileSync(caseFile, "utf8"));
-  const files: Record<string, string> = { requirements:"30-requirements.md", documents:"40-documents.md", actions:"50-actions.md", timeline:"60-timeline.md", appointments:"65-appointments.md", landing:"70-finance-logistics.md" };
+  const files: Record<string, string> = { requirements:"30-requirements.md", documents:"40-documents.md", actions:"50-actions.md", timeline:"60-timeline.md", appointments:"65-appointments.md", landing:"70-finance-logistics.md", decisions:"80-decisions.md" };
   return { case: { case_id: meta.case_id ?? "unknown", case_status: meta.case_status ?? "unknown", phase: meta.phase ?? "unknown", case_path: caseDir }, collections: Object.fromEntries(Object.entries(files).map(([name, file]) => { const path = join(caseDir, file); return [name, existsSync(path) ? parseRecords(readFileSync(path, "utf8")) : []]; })) };
 }
 function statePath(caseDir: string) { return join(caseDir, ".migration-os", "ui-session.json"); }
@@ -24,6 +24,11 @@ function requestPath(caseDir: string) { return join(caseDir, ".migration-os", "r
 function eventPath(caseDir: string) { return join(caseDir, ".migration-os", "events.jsonl"); }
 function readJsonLines(path: string) { return existsSync(path) ? readFileSync(path, "utf8").trim().split("\n").filter(Boolean).map(line => JSON.parse(line)) : []; }
 function appendJsonLine(path: string, entry: object) { mkdirSync(dirname(path), { recursive:true }); writeFileSync(path, JSON.stringify(entry) + "\n", { encoding:"utf8", flag:"a" }); }
+function acceptDecision(caseDir: string, id: string) {
+  if (!/^DEC-\d{3,}$/.test(id)) throw new Error("invalid decision ID"); const path = join(caseDir, "80-decisions.md"); const text = readFileSync(path, "utf8");
+  const match = text.match(new RegExp(`(## ${id}[^\\n]*[\\s\\S]*?\\n- Status:) proposed(\\n)`)); if (!match) throw new Error("decision is not an existing proposed record");
+  writeFileSync(path, text.replace(match[0], `${match[1]} accepted${match[2]}`), "utf8"); appendJsonLine(eventPath(caseDir), { kind:"decision_accepted", decision_id:id, at:new Date().toISOString() });
+}
 function contentType(path: string) { return path.endsWith(".js") ? "text/javascript" : path.endsWith(".css") ? "text/css" : path.endsWith(".html") ? "text/html" : "application/octet-stream"; }
 function openBrowser(url: string) { if (process.platform === "darwin") Bun.spawn(["open", url], { stdout:"ignore", stderr:"ignore" }); else if (process.platform === "win32") Bun.spawn(["cmd", "/c", "start", "", url], { stdout:"ignore", stderr:"ignore" }); else Bun.spawn(["xdg-open", url], { stdout:"ignore", stderr:"ignore" }); }
 async function serve(caseDir: string, noBrowser: boolean) {
@@ -40,6 +45,7 @@ async function serve(caseDir: string, noBrowser: boolean) {
       const entry = { id:`REQST-${crypto.randomUUID()}`, type:typeof body.type === "string" ? body.type : "agent_research", objective:body.objective.trim(), status:"pending", created_at:new Date().toISOString() };
       appendJsonLine(requestPath(casePath), entry); appendJsonLine(eventPath(casePath), { kind:"request_created", request_id:entry.id, at:entry.created_at }); return Response.json(entry, { status:201 });
     });
+    if (url.pathname === "/api/decisions/accept" && request.method === "POST") return request.json().then((body: any) => { try { if (body?.confirm !== true) return new Response("explicit confirmation required", {status:400}); acceptDecision(casePath, body.id); return Response.json(payload(casePath)); } catch (error) { return new Response(error instanceof Error ? error.message : "invalid decision", {status:400}); } });
     const requested = url.pathname === "/" ? "index.html" : url.pathname.slice(1); const path = resolve(assets, requested);
     if (!path.startsWith(assets) || !existsSync(path)) return new Response("not found", { status:404 });
     return new Response(Bun.file(path), { headers:{ "Content-Type":contentType(path), "Cache-Control":"no-store" } });
