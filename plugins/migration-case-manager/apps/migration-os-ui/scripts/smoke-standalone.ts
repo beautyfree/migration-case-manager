@@ -7,8 +7,10 @@ if (!binary) throw new Error("usage: bun run scripts/smoke-standalone.ts <migrat
 
 function run(args: string[]) {
   const result = Bun.spawnSync([binary, ...args], { stdout: "pipe", stderr: "pipe" });
-  if (result.exitCode !== 0) throw new Error(`${args.join(" ")} failed: ${new TextDecoder().decode(result.stderr)}`);
-  return new TextDecoder().decode(result.stdout);
+  const stdout = new TextDecoder().decode(result.stdout);
+  const stderr = new TextDecoder().decode(result.stderr);
+  if (result.exitCode !== 0) throw new Error(`${args.join(" ")} failed: ${stdout}${stderr}`);
+  return stdout;
 }
 
 const root = mkdtempSync(join(tmpdir(), "migration-os-smoke-"));
