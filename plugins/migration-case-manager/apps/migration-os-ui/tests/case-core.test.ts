@@ -1,9 +1,10 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { assertSafeCaseWrite, loadCase, parseFrontmatter, parseRecords, writeCaseText } from "../src/case-core";
 import { validateCase } from "../src/validate";
+import { migrateCase } from "../src/migrate";
 
 const cleanup: string[] = [];
 function fixture(): string {
@@ -144,5 +145,20 @@ describe("case core", () => {
     expect(errors).toContain("ACT-901 completed without accepted decision");
     expect(errors).toContain("APPT-901 confirmed without selected provider");
     expect(errors).toContain("APPT-901 confirmed without accepted decision");
+  });
+
+  test("migrates a v1 case without modifying its source", async () => {
+    const root = mkdtempSync(join(tmpdir(), "migration-os-v1-")); cleanup.push(root);
+    const source = join(root, "v1"), destination = join(root, "v2"); mkdirSync(source);
+    const files: Record<string, string> = {
+      "00-case.md":"---\ncase_id: CASE-901\nschema_version: 1\nstatus: discovery\nlast_verified: unknown\n---\n\n# Old case\n",
+      "10-profile.md":"---\nparticipants:\n- id: PERSON-001\n---\n\n# Old profile\n", "20-requirements.md":"---\nsources: []\n---\n\n# Old requirements\n", "30-documents.md":"---\ndocuments: []\n---\n\n# Old documents\n", "40-actions.md":"---\nactions: []\n---\n\n# Old actions\n", "50-timeline.md":"---\ntimeline: []\n---\n\n# Old timeline\n", "60-decisions.md":"---\ndecisions: []\n---\n\n# Old decisions\n", "70-evidence-index.md":"---\nevidence: []\n---\n\n# Old evidence\n", "90-readiness-report.md":"---\ngenerated_at: unknown\nstatus: not_assessed\n---\n\n# Old readiness\n"
+    };
+    for (const [name, value] of Object.entries(files)) writeFileSync(join(source, name), value);
+    const before = Object.fromEntries(Object.keys(files).map(name => [name, readFileSync(join(source, name), "utf8")]));
+    await migrateCase(source, destination, "2026-07-30");
+    expect(Object.fromEntries(Object.keys(files).map(name => [name, readFileSync(join(source, name), "utf8")]))).toEqual(before);
+    expect(validateCase(destination, new Date("2026-07-30T00:00:00Z")).ok).toBe(true);
+    expect(readFileSync(join(destination, "98-migration-report.md"), "utf8")).toContain("Evidence files were not copied");
   });
 });

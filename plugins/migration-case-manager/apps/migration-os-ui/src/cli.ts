@@ -7,6 +7,7 @@ import { appendJsonLine, caseFile, loadCase, readCaseText, readJsonLines, runtim
 import { validateCase } from "./validate";
 import { initCase } from "./operations";
 import { renderCase } from "./render";
+import { migrateCase } from "./migrate";
 
 const cookieName = "migration_os_session";
 const root = resolve(import.meta.dir, "..");
@@ -43,8 +44,15 @@ async function serve(caseDir: string, noBrowser: boolean) {
   const url = `http://127.0.0.1:${server.port}/?token=${token}`; console.log(`Migration OS UI: ${url}`); if (!noBrowser) openBrowser(url);
   const stop = () => { server.stop(true); process.exit(0); }; process.on("SIGINT", stop); process.on("SIGTERM", stop); await new Promise(() => {});
 }
-function usage() { console.log("Usage: migration-os-ui <serve|status|stop|validate|requests|claim|complete|build> <case-directory> [--no-browser]"); }
+function usage() { console.log(JSON.stringify({ ok:false, command:"migration-os", error:{ code:"CASE_INVALID", message:"missing or unsupported command" }, fix:"Run migration-os doctor or consult the installed plugin for the supported command tree.", next_actions:[] })); }
 const [command, target, ...flags] = process.argv.slice(2);
+if (command === "migrate") {
+  const destination = flags[0];
+  if (!target || !destination) { usage(); process.exit(2); }
+  try { const result = await migrateCase(target, destination); console.log(JSON.stringify({ ok:true, command:"migration-os migrate", result, next_actions:[{ command:"migration-os validate <case-directory>", description:"Validate the new v2 case before treating migrated records as ready.", params:{ "case-directory":{ value:result.destination, required:true } } }] })); }
+  catch (error) { console.log(JSON.stringify({ ok:false, command:"migration-os migrate", error:{ code:"CASE_INVALID", message:error instanceof Error ? error.message : "migration failed" }, fix:"Keep the v1 source unchanged and use an empty destination directory.", next_actions:[] })); process.exitCode = 1; }
+  process.exit();
+}
 if (!command || !target) { usage(); process.exit(2); }
 const caseDir = resolve(target);
 if (command === "init") { const created = await initCase(caseDir); console.log(JSON.stringify({ ok:true, command:"migration-os init", result:{ case_path:created }, next_actions:[{ command:"migration-os validate <case-directory>", description:"Validate the newly created case before adding records." }] })); }
