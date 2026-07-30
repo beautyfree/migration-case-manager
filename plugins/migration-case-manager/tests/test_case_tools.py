@@ -20,6 +20,10 @@ REFRESH_SPEC = importlib.util.spec_from_file_location("refresh_sources", SCRIPTS
 assert REFRESH_SPEC and REFRESH_SPEC.loader
 REFRESH = importlib.util.module_from_spec(REFRESH_SPEC)
 REFRESH_SPEC.loader.exec_module(REFRESH)
+DATES_SPEC = importlib.util.spec_from_file_location("document_dates", SCRIPTS / "document_dates.py")
+assert DATES_SPEC and DATES_SPEC.loader
+DATES = importlib.util.module_from_spec(DATES_SPEC)
+DATES_SPEC.loader.exec_module(DATES)
 
 
 def run(script: str, *args: Path, expected: int = 0) -> subprocess.CompletedProcess[str]:
@@ -243,6 +247,31 @@ class CaseToolsTest(unittest.TestCase):
             second = REFRESH.refresh(case, state, "2026-07-31", fetcher=lambda _url: b"changed public page")
             self.assertIn("SRC-001: changed", second[0])
             self.assertIn("SRC-002: new, stale", second[1])
+
+    def test_document_timing_reports_early_and_late_documents(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            case = Path(temp) / "case"
+            run("create_case.py", case)
+            append(case / "40-documents.md", """
+## DOC-001 — Synthetic time-sensitive certificate
+
+- Owner: PERSON-001
+- Type: certificate
+- Status: requested
+- Required by: none
+- Evidence: none
+- Issued: 2026-01-01
+- Expires: unknown
+- Needed by: 2026-08-01
+- Lead time days: 14
+- Maximum age days: 30
+- Transformations: original
+- Actions: none
+""")
+            lines = DATES.report(case, DATES.date.fromisoformat("2026-07-20"))
+            self.assertIn("issued_too_early, order_too_late", lines[0])
+            self.assertIn("earliest_issue 2026-07-02", lines[0])
+            self.assertIn("latest_order 2026-07-18", lines[0])
 
 
 if __name__ == "__main__":

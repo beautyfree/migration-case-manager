@@ -14,6 +14,9 @@ schema_version: 2
 - Evidence: none
 - Issued: unknown
 - Expires: unknown
+- Needed by: unknown
+- Lead time days: unknown
+- Maximum age days: unknown
 - Transformations: original
 - Actions: ACT-001
 
@@ -26,6 +29,9 @@ schema_version: 2
 - Evidence: none
 - Issued: unknown
 - Expires: unknown
+- Needed by: unknown
+- Lead time days: unknown
+- Maximum age days: unknown
 - Transformations: original
 - Actions: ACT-001
 
@@ -38,6 +44,9 @@ schema_version: 2
 - Evidence: none
 - Issued: unknown
 - Expires: unknown
+- Needed by: unknown
+- Lead time days: unknown
+- Maximum age days: unknown
 - Transformations: original
 - Actions: ACT-001
 
@@ -50,6 +59,9 @@ schema_version: 2
 - Evidence: none
 - Issued: unknown
 - Expires: unknown
+- Needed by: unknown
+- Lead time days: unknown
+- Maximum age days: unknown
 - Transformations: original, apostille, certified_translation
 - Actions: ACT-005
 
@@ -62,5 +74,8 @@ schema_version: 2
 - Evidence: none
 - Issued: unknown
 - Expires: unknown
+- Needed by: unknown
+- Lead time days: unknown
+- Maximum age days: unknown
 - Transformations: original, apostille, certified_translation
 - Actions: ACT-005

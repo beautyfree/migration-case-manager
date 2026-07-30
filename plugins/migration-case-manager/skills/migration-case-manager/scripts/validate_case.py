@@ -24,7 +24,7 @@ REQUIRED_FIELDS = {
     "ROUTE": {"Destination", "Legal basis", "Country of application", "Applies to", "Status", "Sources", "Decision"},
     "SRC": {"Publisher", "Official URL", "Retrieved", "Updated", "Applies to", "Rule summary", "Fresh until", "Status"},
     "REQ": {"Source", "Applies to", "Condition", "Status", "Evidence", "Actions", "Dependencies", "Conflict", "Review needed"},
-    "DOC": {"Owner", "Type", "Status", "Required by", "Evidence", "Issued", "Expires", "Transformations", "Actions"},
+    "DOC": {"Owner", "Type", "Status", "Required by", "Evidence", "Issued", "Expires", "Needed by", "Lead time days", "Maximum age days", "Transformations", "Actions"},
     "ACT": {"Purpose", "Requirements", "Dependencies", "Status", "Class", "Owner", "Target", "Deadline", "Expected receipt", "Receipt", "Decision"},
     "MILESTONE": {"Date", "Kind", "Status", "Depends on", "Linked records", "Consequence if missed"},
     "LOG": {"Area", "Status", "Applies to", "Actions", "Decision", "Notes"},
@@ -106,6 +106,10 @@ def document_chain_error(value: str) -> str | None:
     return None
 
 
+def valid_day_count(value: str) -> bool:
+    return value == "unknown" or (value.isdigit() and int(value) >= 0)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("case_directory", type=Path)
@@ -179,6 +183,9 @@ def main() -> int:
             chain_error = document_chain_error(fields.get("Transformations", ""))
             if chain_error:
                 errors.append(f"{identifier} Transformations {chain_error}")
+            for field_name in {"Lead time days", "Maximum age days"}:
+                if not valid_day_count(fields.get(field_name, "")):
+                    errors.append(f"{identifier} has invalid {field_name}: {fields.get(field_name)}")
         if prefix == "REQ":
             conflict = fields.get("Conflict")
             if conflict not in {"none", "needs_reconciliation"}:
