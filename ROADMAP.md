@@ -32,11 +32,11 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 
 | Field | Value |
 | --- | --- |
-| Product phase | R6 — Local visual renderer discovery |
-| Current item | All planned releases complete |
-| Current status | `done` |
-| Next concrete outcome | Run a private route case with current facts; use the existing research/action workflows for any new corridor. |
-| Primary blocker | None at plugin level. Case-specific decisions and live legal sources remain intentionally external to the reusable plugin. |
+| Product phase | R7 — Local web application |
+| Current item | `R7-02` |
+| Current status | `in_progress` |
+| Next concrete outcome | Package the prebuilt React shell and start it through a localhost-only server launcher. |
+| Primary blocker | None. The launcher must preserve case and session isolation. |
 | Canonical case data | Markdown case folder outside the plugin and outside Git. |
 | Current repository | `https://github.com/beautyfree/migration-case-manager` |
 
@@ -130,6 +130,26 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 | `R6-03` | `done` | Build static HTML/local renderer. | `render_html.py` produces an ignored, static, no-network/no-edit HTML file with readiness/consent queue, route graph, documents, timeline, appointments, and landing board. Automated test and Georgia reference-case render passed. | `R6-02` |
 | `R6-04` | `done` | Evaluate bidirectional editing. | Decision: do not add editing. Scenario evidence supports inspection only; conflict handling, auditability, consent-aware mutations, and Markdown round-trip are unproven. The renderer contract preserves Markdown-only edits pending a separate future proposal. | `R6-03` |
 
+## Release R7 — Local React web application
+
+**Outcome:** a user installs the plugin, asks an agent to open a private case, and works in a localhost browser UI without a mandatory cloud service.
+
+| ID | Status | Work | Acceptance criteria | Depends on |
+| --- | --- | --- | --- | --- |
+| `R7-01` | `done` | Define local-app contract and package boundary. | `local-app-contract.md` defines loopback/session rules, Markdown authority, safe API/events, consent boundaries, and packaging. Existing contract suite stayed green. | `R6` |
+| `R7-02` | `in_progress` | Package React app and local server launcher. | A single plugin command opens a case-scoped UI on `127.0.0.1` with a random session token and no dependency installation by the user. | `R7-01` |
+| `R7-03` | `planned` | Implement read-only case API and live React views. | UI shows readiness, source freshness, timeline, route graph, documents, appointments, and landing data from a local case. | `R7-02` |
+| `R7-04` | `planned` | Add agent request bridge. | UI can create a structured request; an agent can claim it, write verified results to the case, and return a visible event. | `R7-03` |
+| `R7-05` | `planned` | Add consent-safe mutations. | Scoped UI actions create validated case records; confirmation-required actions stop before external effects. | `R7-04` |
+| `R7-06` | `planned` | Run Georgia end-to-end local UI verification. | User-path test opens the family/IE case, refreshes sources, creates provider research request, receives comparison, and stops before an irreversible action. | `R7-02`–`R7-05` |
+
+### R7 release gate
+
+- The plugin starts a local app without a hosted account or central database.
+- Server binds only to loopback and requires a session token.
+- Markdown case files remain the authority and the UI can be stopped/deleted without data loss.
+- No UI path bypasses the existing consent and human-only controls.
+
 ## Permanent operating loop
 
 1. Read this roadmap and the current case dashboard.
@@ -174,3 +194,5 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 | 2026-07-30 | Completed `R6-02`: defined a disposable, read-only renderer contract from the four scenario findings. Started `R6-03`. |
 | 2026-07-30 | Completed `R6-03`: added and exercised a static local HTML renderer. Started R6-04 evaluation. |
 | 2026-07-30 | Completed `R6-04` and the planned Migration OS roadmap: bidirectional editing is explicitly deferred because its safety invariants are unproven. The plugin remains Markdown-first and read-only in its renderer. |
+| 2026-07-30 | Started R7 by user request: package a localhost React web application into the plugin, with no mandatory central server. |
+| 2026-07-30 | Completed `R7-01`: recorded local-app authority, security, lifecycle, API, bridge, and consent contract. Started `R7-02`. |
