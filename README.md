@@ -32,7 +32,15 @@ Start a new Codex task after installation so the new skills are available. Then 
 Create a migration case for a family moving from the Netherlands to Brazil.
 ```
 
-To update later, use the Codex plugin manager or remove and re-add the marketplace snapshot before reinstalling.
+To update an already installed copy, refresh the marketplace snapshot, reinstall the plugin, and start a **new** Codex task. This matters because a task keeps the skills it had when it started:
+
+```bash
+codex plugin marketplace upgrade migration-case-manager
+codex plugin remove migration-case-manager@migration-case-manager
+codex plugin add migration-case-manager@migration-case-manager
+```
+
+After the new task starts, ask it to use `migration-case-manager` explicitly if the request is ambiguous. The skill includes the bundled Bun-based Migration OS UI; it must not create a replacement UI.
 
 ## Install in Claude Code
 
