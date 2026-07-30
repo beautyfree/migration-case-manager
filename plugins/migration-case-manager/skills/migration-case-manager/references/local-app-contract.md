@@ -29,8 +29,8 @@ The UI may write a structured local request: type, linked records, plain-languag
 
 ## Mutations and consent
 
-Only schema-limited local mutations are allowed: create a request, propose/accept a decision, update safe status fields, or record an opaque receipt reference. Every mutation runs `validate_case.py` before becoming visible. External submission, booking, payment, messaging, disclosure, identity verification, signatures, biometrics, and 2FA remain governed by the existing action class and scoped decision rules.
+Only schema-limited local mutations are allowed: create a request, propose/accept a decision, update safe status fields, or record an opaque receipt reference. An agent must run `migration-os validate <case-directory>` after every case-source mutation before treating it as ready. External submission, booking, payment, messaging, disclosure, identity verification, signatures, biometrics, and 2FA remain governed by the existing action class and scoped decision rules.
 
 ## Packaging
 
-React is prebuilt into static assets under the plugin. A Bun CLI serves the assets and API and can be compiled to a standalone executable with `bun build --compile`. Node is not a runtime requirement; Bun/Vite are maintainer build tooling only.
+React is prebuilt into static assets under the plugin. The compiled `migration-os` binary serves the assets and API. Node, Bun, and Vite are maintainer build tooling only, never a normal user runtime requirement.

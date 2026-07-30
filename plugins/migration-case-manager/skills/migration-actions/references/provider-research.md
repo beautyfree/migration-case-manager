@@ -9,4 +9,4 @@ Use this for a translator, notary, apostille service, visa centre, courier, insu
 5. Present the comparison and recommendation as a proposal. Booking, payment, sending a document, or revealing personal details is `confirmation_required`; notarization, identity checks, signatures, and in-person handover are `human_only`.
 6. After a person chooses, create a scoped `DEC-*` decision naming the exact candidate, price/currency, appointment (if any), and linked action. Record a safe receipt reference only after completion.
 
-Use `create_provider_comparison.py` to create the Markdown comparison shell. It contains no personal data and refuses to overwrite an existing comparison.
+Use `migration-os provider comparison <case-directory> <action-id> --service <service> --city <city>` to create the Markdown comparison shell. It contains no personal data and refuses to overwrite an existing comparison.

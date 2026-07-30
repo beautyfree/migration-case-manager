@@ -14,7 +14,7 @@ It deliberately separates four questions that generic migration guides commonly 
 3. eligibility for a work residence permit through entrepreneurial activity;
 4. family reunification after a residence permit is held.
 
-To turn this into a private live case, run `create_case.py` outside the repository, copy only the non-sensitive records, then replace `unknown` facts and source dates. Never commit actual passports, birth certificates, document numbers, addresses, credentials, or receipts.
+To turn this into a private live case, run `migration-os init <private-case-directory>` outside the repository, copy only the non-sensitive records, then replace `unknown` facts and source dates. Never commit actual passports, birth certificates, document numbers, addresses, credentials, or receipts.
 
 Before any application, payment, booking, or upload, execute the linked action under the consent class recorded in `50-actions.md` and refresh all sources that have reached `Fresh until`.
 

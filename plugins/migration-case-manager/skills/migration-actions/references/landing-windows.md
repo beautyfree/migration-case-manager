@@ -1,6 +1,6 @@
 # Landing windows
 
-Use the landing lane shown by `arrival_phase.py` or the dashboard. These are planning windows, not legal deadlines; add a `REQ-*` and official source before treating any item as mandatory.
+Use the landing lane shown by `migration-os arrival phase <case-directory>` or the dashboard. These are planning windows, not legal deadlines; add a `REQ-*` and official source before treating any item as mandatory.
 
 - `arrival_72h`: secure housing, connectivity, transport, essential care, and document storage; record urgent failures.
 - `arrival_30d`: execute source-backed registrations, insurance, schooling, and service actions that depend on the selected route.
