@@ -12,7 +12,7 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
-from render_case import meta
+from render_case import meta, records
 
 
 COOKIE = "migration_os_session"
@@ -24,6 +24,19 @@ def case_payload(case: Path) -> dict[str, str]:
         raise ValueError(f"missing case file: {case_file}")
     values = meta(case_file.read_text(encoding="utf-8"))
     return {"case_id": values.get("case_id", "unknown"), "case_status": values.get("case_status", "unknown"), "phase": values.get("phase", "unknown"), "case_path": str(case)}
+
+
+def case_data(case: Path) -> dict[str, object]:
+    data: dict[str, object] = {"case": case_payload(case), "collections": {}}
+    files = {
+        "requirements": "30-requirements.md", "documents": "40-documents.md", "actions": "50-actions.md",
+        "timeline": "60-timeline.md", "appointments": "65-appointments.md", "landing": "70-finance-logistics.md",
+    }
+    collections: dict[str, object] = data["collections"]  # type: ignore[assignment]
+    for name, filename in files.items():
+        path = case / filename
+        collections[name] = records(path.read_text(encoding="utf-8")) if path.is_file() else []
+    return data
 
 
 def handler_factory(case: Path, assets: Path, token: str):
@@ -48,8 +61,8 @@ def handler_factory(case: Path, assets: Path, token: str):
             if not self.authorized():
                 self.send_error(HTTPStatus.FORBIDDEN, "local session token required")
                 return
-            if parsed.path == "/api/case":
-                body = json.dumps(case_payload(case)).encode()
+            if parsed.path in {"/api/case", "/api/data"}:
+                body = json.dumps(case_data(case) if parsed.path == "/api/data" else case_payload(case)).encode()
                 self.send_response(HTTPStatus.OK)
                 self.send_header("Content-Type", "application/json")
                 self.send_header("Cache-Control", "no-store")
