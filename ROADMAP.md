@@ -33,10 +33,10 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 | Field | Value |
 | --- | --- |
 | Product phase | R7 — Local web application |
-| Current item | `R7-02` |
+| Current item | `R7-03` |
 | Current status | `in_progress` |
-| Next concrete outcome | Package the prebuilt React shell and start it through a localhost-only server launcher. |
-| Primary blocker | None. The launcher must preserve case and session isolation. |
+| Next concrete outcome | Expose the parsed case through a safe local API and replace the React shell with live case views. |
+| Primary blocker | None. API must remain case-scoped, token-protected, and evidence-free. |
 | Canonical case data | Markdown case folder outside the plugin and outside Git. |
 | Current repository | `https://github.com/beautyfree/migration-case-manager` |
 
@@ -137,8 +137,8 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 | ID | Status | Work | Acceptance criteria | Depends on |
 | --- | --- | --- | --- | --- |
 | `R7-01` | `done` | Define local-app contract and package boundary. | `local-app-contract.md` defines loopback/session rules, Markdown authority, safe API/events, consent boundaries, and packaging. Existing contract suite stayed green. | `R6` |
-| `R7-02` | `in_progress` | Package React app and local server launcher. | A single plugin command opens a case-scoped UI on `127.0.0.1` with a random session token and no dependency installation by the user. | `R7-01` |
-| `R7-03` | `planned` | Implement read-only case API and live React views. | UI shows readiness, source freshness, timeline, route graph, documents, appointments, and landing data from a local case. | `R7-02` |
+| `R7-02` | `done` | Package React app and local server launcher. | Prebuilt React/Vite assets are packaged in the plugin; `launch_ui.py` binds `127.0.0.1` on an ephemeral port, boots a 256-bit token session, uses HttpOnly SameSite cookie bootstrap, and writes ignored local runtime state. Manual launch succeeded on the Georgia case; no user Node install is needed. | `R7-01` |
+| `R7-03` | `in_progress` | Implement read-only case API and live React views. | UI shows readiness, source freshness, timeline, route graph, documents, appointments, and landing data from a local case. | `R7-02` |
 | `R7-04` | `planned` | Add agent request bridge. | UI can create a structured request; an agent can claim it, write verified results to the case, and return a visible event. | `R7-03` |
 | `R7-05` | `planned` | Add consent-safe mutations. | Scoped UI actions create validated case records; confirmation-required actions stop before external effects. | `R7-04` |
 | `R7-06` | `planned` | Run Georgia end-to-end local UI verification. | User-path test opens the family/IE case, refreshes sources, creates provider research request, receives comparison, and stops before an irreversible action. | `R7-02`–`R7-05` |
@@ -196,3 +196,4 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 | 2026-07-30 | Completed `R6-04` and the planned Migration OS roadmap: bidirectional editing is explicitly deferred because its safety invariants are unproven. The plugin remains Markdown-first and read-only in its renderer. |
 | 2026-07-30 | Started R7 by user request: package a localhost React web application into the plugin, with no mandatory central server. |
 | 2026-07-30 | Completed `R7-01`: recorded local-app authority, security, lifecycle, API, bridge, and consent contract. Started `R7-02`. |
+| 2026-07-30 | Completed `R7-02`: packaged prebuilt React assets and a token-protected loopback launcher, manually started against the Georgia case. Started `R7-03`. |
