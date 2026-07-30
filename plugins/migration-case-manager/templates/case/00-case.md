@@ -4,6 +4,7 @@ schema_version: 2
 case_status: draft
 phase: explore
 last_verified: unknown
+move_date: unknown
 ---
 
 # Migration case

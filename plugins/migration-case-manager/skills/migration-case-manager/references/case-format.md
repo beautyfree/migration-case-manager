@@ -42,6 +42,7 @@ schema_version: 2
 case_status: active
 phase: prepare
 last_verified: 2026-07-30
+move_date: unknown
 ---
 ```
 
@@ -55,6 +56,8 @@ schema_version: 2
 ```
 
 Use dates as `YYYY-MM-DD`; use `unknown` only where a fact has not been established. Never encode a relative date such as “next Tuesday” as case data.
+
+`move_date` is required in `00-case.md` and is either an exact date or `unknown`. It drives only the landing-workflow lane; it does not infer an immigration deadline.
 
 ## Stable identifiers and record headings
 

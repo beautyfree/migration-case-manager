@@ -65,6 +65,7 @@ python3 plugins/migration-case-manager/skills/migration-case-manager/scripts/doc
 python3 plugins/migration-case-manager/skills/migration-case-manager/scripts/document_quality.py ~/migration-cases/brazil-dnv-2026
 python3 plugins/migration-case-manager/skills/migration-case-manager/scripts/create_provider_comparison.py ~/migration-cases/brazil-dnv-2026 ACT-001 --service "certified translator" --city Tbilisi
 python3 plugins/migration-case-manager/skills/migration-case-manager/scripts/logistics_readiness.py ~/migration-cases/brazil-dnv-2026
+python3 plugins/migration-case-manager/skills/migration-case-manager/scripts/arrival_phase.py ~/migration-cases/brazil-dnv-2026
 ```
 
 The generated case contains numbered Markdown source files. `99-dashboard.md` is derived output; update the source files and render again rather than editing it.

@@ -167,6 +167,8 @@ def main() -> int:
         errors.append("00-case.md has invalid case_status")
     if case_meta.get("phase") not in {"explore", "choose_route", "prepare", "apply", "move", "land", "stabilize"}:
         errors.append("00-case.md has invalid phase")
+    if "move_date" not in case_meta or not valid_date(case_meta.get("move_date", "")):
+        errors.append("00-case.md must have a valid move_date or unknown")
     for filename, text in all_text.items():
         for identifier in ID_REF.findall(text):
             if identifier not in headers:

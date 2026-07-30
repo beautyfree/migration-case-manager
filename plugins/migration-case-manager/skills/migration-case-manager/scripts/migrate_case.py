@@ -52,6 +52,7 @@ def v2_frontmatter(case_id: str, filename: str, old_fields: dict[str, str]) -> s
             f"case_status: {case_status}\n"
             f"phase: {phase}\n"
             f"last_verified: {old_fields.get('last_verified', 'unknown')}\n"
+            "move_date: unknown\n"
             "---\n\n"
         )
     if filename == "95-readiness-report.md":

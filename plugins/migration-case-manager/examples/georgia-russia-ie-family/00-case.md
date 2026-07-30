@@ -4,6 +4,7 @@ schema_version: 2
 case_status: active
 phase: choose_route
 last_verified: 2026-07-30
+move_date: unknown
 ---
 
 # Georgia reference case

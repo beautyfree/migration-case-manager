@@ -45,6 +45,22 @@ def render_section(lines: list[str], heading: str, entries: list[str], empty: st
     lines.append("")
 
 
+def arrival_lane(move_date: str, as_of: date) -> str:
+    if move_date == "unknown":
+        return "pre_move (move date unknown)"
+    moved = date.fromisoformat(move_date)
+    days = (as_of - moved).days
+    if days < 0:
+        return "pre_move"
+    if days <= 3:
+        return "arrival_72h"
+    if days <= 30:
+        return "arrival_30d"
+    if days <= 90:
+        return "arrival_90d"
+    return "stabilize"
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("case_directory", type=Path)
@@ -62,6 +78,7 @@ def main() -> int:
     }
     contents = {filename: (case / filename).read_text(encoding="utf-8") for filename in files if (case / filename).is_file()}
     case_meta = meta((case / "00-case.md").read_text(encoding="utf-8")) if (case / "00-case.md").is_file() else {}
+    lane = arrival_lane(case_meta.get("move_date", "unknown"), date.today())
     grouped = {label: records(contents.get(filename, "")) for filename, label in files.items()}
     counts = {label: len(items) for label, items in grouped.items()}
     blocked = [line(item, str(item["fields"].get("Status", "unknown"))) for item in grouped["Requirements"] if item["fields"].get("Status") == "blocked"]
@@ -101,6 +118,7 @@ def main() -> int:
         "# Migration OS dashboard",
         "",
         f"Case: `{case_meta.get('case_id', 'unknown')}` · {case_meta.get('case_status', 'unknown')} · {case_meta.get('phase', 'unknown')}",
+        f"Landing lane: `{lane}`",
         "",
         "| Area | Records |",
         "| --- | ---: |",

@@ -385,6 +385,17 @@ class CaseToolsTest(unittest.TestCase):
             self.assertIn("confirmed without accepted decision", result.stdout)
             self.assertIn("confirmed without EVD receipt", result.stdout)
 
+    def test_arrival_phase_changes_from_move_date(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            case = Path(temp) / "case"
+            run("create_case.py", case)
+            case_file = case / "00-case.md"
+            case_file.write_text(case_file.read_text(encoding="utf-8").replace("move_date: unknown", "move_date: 2026-07-01"), encoding="utf-8")
+            result = run("arrival_phase.py", case, Path("--as-of"), Path("2026-07-03"))
+            self.assertIn("arrival_72h", result.stdout)
+            result = run("arrival_phase.py", case, Path("--as-of"), Path("2026-07-20"))
+            self.assertIn("arrival_30d", result.stdout)
+
 
 if __name__ == "__main__":
     unittest.main()
