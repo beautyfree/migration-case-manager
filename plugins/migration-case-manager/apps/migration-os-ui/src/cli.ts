@@ -8,6 +8,8 @@ import { validateCase } from "./validate";
 import { initCase } from "./operations";
 import { renderCase } from "./render";
 import { migrateCase } from "./migrate";
+import { arrivalPhase, documentDates, documentQuality, logisticsReadiness } from "./reports";
+import { createBranch, createProviderComparison } from "./generators";
 
 const cookieName = "migration_os_session";
 const root = resolve(import.meta.dir, "..");
@@ -46,6 +48,16 @@ async function serve(caseDir: string, noBrowser: boolean) {
 }
 function usage() { console.log(JSON.stringify({ ok:false, command:"migration-os", error:{ code:"CASE_INVALID", message:"missing or unsupported command" }, fix:"Run migration-os doctor or consult the installed plugin for the supported command tree.", next_actions:[] })); }
 const [command, target, ...flags] = process.argv.slice(2);
+function report(commandName: string, execute: () => unknown) {
+  try { console.log(JSON.stringify({ ok:true, command:commandName, result:execute(), next_actions:[] })); }
+  catch (error) { console.log(JSON.stringify({ ok:false, command:commandName, error:{ code:"CASE_INVALID", message:error instanceof Error ? error.message : "operation failed" }, fix:"Check the case path and command inputs, then retry.", next_actions:[] })); process.exitCode = 1; }
+}
+if (command === "document" && target === "dates") { const asOf = flags[1] === "--as-of" ? new Date(`${flags[2]}T00:00:00Z`) : new Date(); report("migration-os document dates", () => ({ as_of:asOf.toISOString().slice(0, 10), lines:documentDates(flags[0], asOf) })); process.exit(); }
+if (command === "document" && target === "quality") { report("migration-os document quality", () => ({ lines:documentQuality(flags[0]) })); process.exit(); }
+if (command === "logistics" && target === "readiness") { report("migration-os logistics readiness", () => ({ lines:logisticsReadiness(flags[0]) })); process.exit(); }
+if (command === "arrival" && target === "phase") { const asOf = flags[1] === "--as-of" ? new Date(`${flags[2]}T00:00:00Z`) : new Date(); report("migration-os arrival phase", () => ({ as_of:asOf.toISOString().slice(0, 10), lane:arrivalPhase(flags[0], asOf) })); process.exit(); }
+if (command === "branch" && target === "create") { const ownerAt = flags.indexOf("--owner"), owner = ownerAt >= 0 ? flags[ownerAt + 1] : "unknown"; report("migration-os branch create", () => ({ output:createBranch(flags[0], flags[1], owner) })); process.exit(); }
+if (command === "provider" && target === "comparison") { const serviceAt = flags.indexOf("--service"), cityAt = flags.indexOf("--city"); report("migration-os provider comparison", () => ({ output:createProviderComparison(flags[0], flags[1], serviceAt >= 0 ? flags[serviceAt + 1] ?? "" : "", cityAt >= 0 ? flags[cityAt + 1] ?? "" : "") })); process.exit(); }
 if (command === "migrate") {
   const destination = flags[0];
   if (!target || !destination) { usage(); process.exit(2); }
