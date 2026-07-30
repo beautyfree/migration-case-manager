@@ -20,3 +20,7 @@ The renderer consumes a v2 case folder and derived reports. Markdown remains aut
 - Use IDs as keys and preserve links to their source file/heading.
 - Unknown stays visible; never use a visual default as a legal conclusion.
 - Renderer output is disposable and must be reproducible from the same case folder.
+
+## Bidirectional editing evaluation
+
+**Decision: do not implement it in this plugin.** The current evidence establishes read-only inspection needs, not a safe editor. Markdown round-trip, concurrent-edit conflict handling, auditable mutations, and consent-aware changes have not been proven. A future editor needs a separate proposal and tests for all four; until then, edits stay in the numbered Markdown source files.

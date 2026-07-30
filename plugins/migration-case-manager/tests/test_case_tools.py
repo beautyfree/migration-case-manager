@@ -421,6 +421,18 @@ class CaseToolsTest(unittest.TestCase):
             self.assertEqual(count, 3)
             self.assertIn("not eligible: draft.md", lines[0])
 
+    def test_html_renderer_is_read_only_and_disposable(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            case = Path(temp) / "case"
+            run("create_case.py", case)
+            result = run("render_html.py", case)
+            self.assertIn("Rendered HTML", result.stdout)
+            html = (case / "99-dashboard.html").read_text(encoding="utf-8")
+            self.assertIn("Readiness and consent queue", html)
+            self.assertIn("Route graph", html)
+            self.assertIn("Landing board", html)
+            self.assertIn("No network, forms, authentication", html)
+
 
 if __name__ == "__main__":
     unittest.main()

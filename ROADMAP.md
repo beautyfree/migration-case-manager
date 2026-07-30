@@ -33,10 +33,10 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 | Field | Value |
 | --- | --- |
 | Product phase | R6 — Local visual renderer discovery |
-| Current item | `R6-02` |
-| Current status | `in_progress` |
-| Next concrete outcome | Specify a read-only local renderer from the recurring information needs in four diverse, sanitized scenario retrospectives. |
-| Primary blocker | No implementation blocker; renderer must remain derived and read-only. |
+| Current item | All planned releases complete |
+| Current status | `done` |
+| Next concrete outcome | Run a private route case with current facts; use the existing research/action workflows for any new corridor. |
+| Primary blocker | None at plugin level. Case-specific decisions and live legal sources remain intentionally external to the reusable plugin. |
 | Canonical case data | Markdown case folder outside the plugin and outside Git. |
 | Current repository | `https://github.com/beautyfree/migration-case-manager` |
 
@@ -96,7 +96,6 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 | `R3-01` | `done` | Model document transformations. | Document chains are now validated: known transforms only, original first, upload last, no duplicated transform or apostille/legalization combination, and apostille precedes translation. A negative fixture verifies rejection without storing raw documents. | `R1`, `R2-04` |
 | `R3-02` | `done` | Add document validity and latest-safe-date computation. | `document_dates.py` derives earliest-safe-issue and latest-safe-order dates from explicit case data and reports early-issued or late-ordering risk. A deterministic fixture proves both detections; unknown data remains explicitly insufficient. | `R3-01` |
 | `R3-03` | `done` | Add document quality gate. | `document_quality.py` reports all-pages, legibility, name consistency, language, and legalization checks without opening evidence; validator prevents `ready` with failed or unknown applicable checks. Deterministic failed-legibility fixture passes. | `R3-01` |
-| `R3-03` | `planned` | Add document quality gate. | Checks all-pages, legibility, name consistency, language, and required legalization state as explicit results. | `R3-01` |
 | `R3-04` | `done` | Add provider research runbook. | `provider-research.md` mandates source-linked comparison and explicit consent boundaries; `create_provider_comparison.py` creates a non-destructive two-candidate Markdown shell. Contract test verifies creation and overwrite refusal. | `R2-04` |
 
 ## Release R4 — Action runner
@@ -119,7 +118,6 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 | `R5-01` | `done` | Add finance and logistics lane. | `LOG-*` records now validate areas and statuses; `logistics_readiness.py` surfaces missing core areas. Georgia reference case covers housing, insurance, connectivity, transport, cash, and banking without sensitive financial data. Test verifies omission reporting and secret guard. | `R1`, `R2-04` |
 | `R5-02` | `done` | Add 72-hour, 30-day, and 90-day landing workflows. | Required `move_date` and `arrival_phase.py` select pre-move, 72-hour, 30-day, 90-day, or stabilize lane; dashboard exposes the lane. Tests verify transition and unknown dates stay explicit. | `R5-01`, `R4` |
 | `R5-03` | `done` | Add family and resilience branches. | `create_resilience_branch.py` creates non-destructive `dependent`, `school`, `pet`, `lost_document`, and `urgent_abroad` work queues; the action skill defines human-only and emergency boundaries. Contract test verifies safe branch creation and overwrite refusal. | `R3`, `R5-02` |
-| `R5-03` | `planned` | Add family and resilience branches. | Dependants, pets, school, lost documents, and urgent “already abroad” recovery are explicit case branches. | `R3`, `R5-02` |
 
 ## Release R6 — Local visual renderer
 
@@ -129,8 +127,8 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 | --- | --- | --- | --- | --- |
 | `R6-01` | `done` | Gather 3–5 sanitized case retrospectives. | User authorized scenario coverage. Four source-linked, sanitized scenarios cover family telework, student, partner, and temporary-work routes; they converge on dependency, timeline, eligibility, and landing views. `retrospective_readiness.py` reports 4/3 eligible. | User decision |
 | `R6-02` | `done` | Specify read-only renderer contract. | Contract derives four views from the scenario findings (readiness, timeline, route graph, landing board) and forbids editing, network fetch, authentication, evidence viewing, and secret-bearing state. | `R6-01` |
-| `R6-03` | `in_progress` | Build static HTML/local renderer. | Shows readiness, timeline, dependency graph, stale sources, and consent queue from fixture data. | `R6-02` |
-| `R6-04` | `planned` | Evaluate bidirectional editing. | Only proceed if conflict handling, auditability, and Markdown round-trip are proven. | `R6-03` |
+| `R6-03` | `done` | Build static HTML/local renderer. | `render_html.py` produces an ignored, static, no-network/no-edit HTML file with readiness/consent queue, route graph, documents, timeline, appointments, and landing board. Automated test and Georgia reference-case render passed. | `R6-02` |
+| `R6-04` | `done` | Evaluate bidirectional editing. | Decision: do not add editing. Scenario evidence supports inspection only; conflict handling, auditability, consent-aware mutations, and Markdown round-trip are unproven. The renderer contract preserves Markdown-only edits pending a separate future proposal. | `R6-03` |
 
 ## Permanent operating loop
 
@@ -174,3 +172,5 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 | 2026-07-30 | Prepared R6 intake without fabricating cases: added a sanitized retrospective template and readiness checker. R6-01 remains blocked until at least three real completed, sanitized retrospectives are collected. |
 | 2026-07-30 | User authorized scenario cases in place of waiting for personal retrospectives. Completed `R6-01` with four source-linked, sanitized route scenarios; started read-only renderer specification. |
 | 2026-07-30 | Completed `R6-02`: defined a disposable, read-only renderer contract from the four scenario findings. Started `R6-03`. |
+| 2026-07-30 | Completed `R6-03`: added and exercised a static local HTML renderer. Started R6-04 evaluation. |
+| 2026-07-30 | Completed `R6-04` and the planned Migration OS roadmap: bidirectional editing is explicitly deferred because its safety invariants are unproven. The plugin remains Markdown-first and read-only in its renderer. |
