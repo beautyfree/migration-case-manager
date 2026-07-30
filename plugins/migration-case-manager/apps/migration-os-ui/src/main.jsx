@@ -7,10 +7,13 @@ function Card({item}) { return <article><h3>{item.id} · {item.title}</h3><dl>{O
 function App() {
   const [data, setData] = useState(null);
   const [error, setError] = useState('');
+  const [objective, setObjective] = useState('');
+  const [requestStatus, setRequestStatus] = useState('');
   useEffect(() => { fetch('/api/data').then(r => r.ok ? r.json() : Promise.reject(r.status)).then(setData).catch(() => setError('Local session expired. Reopen Migration OS from the agent.')); }, []);
   if (error) return <main><h1>Migration OS</h1><p>{error}</p></main>;
   if (!data) return <main><h1>Migration OS</h1><p>Loading private case…</p></main>;
   const {case: current, collections} = data;
-  return <main><header><p className="eyebrow">LOCAL · READ ONLY</p><h1>{current.case_id}</h1><p>{current.case_status} · {current.phase}</p></header><section><h2>Next safe step</h2><p>Use the agent to refresh sources, prepare work, or request a consent-safe external action.</p></section>{Object.entries(collections).map(([name, items]) => <section key={name}><h2>{labels[name]}</h2>{items.length ? items.map(item => <Card key={item.id} item={item}/>) : <p>No records.</p>}</section>)}<footer>Local session only. No cloud sync, forms, evidence files, or edit controls.</footer></main>;
+  const submit = async (event) => { event.preventDefault(); const response = await fetch('/api/requests', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({type:'agent_research', objective})}); setRequestStatus(response.ok ? 'Request queued. It does not authorize an external action.' : 'Could not queue request.'); if (response.ok) setObjective(''); };
+  return <main><header><p className="eyebrow">LOCAL · READ ONLY</p><h1>{current.case_id}</h1><p>{current.case_status} · {current.phase}</p></header><section><h2>Ask the agent</h2><form onSubmit={submit}><input value={objective} onChange={e=>setObjective(e.target.value)} minLength="3" maxLength="500" placeholder="e.g. Compare certified translators in Tbilisi"/><button disabled={!objective.trim()}>Queue request</button></form><p>{requestStatus || 'Requests prepare work only. Booking, payment, submission, and disclosure still need confirmation.'}</p></section><section><h2>Next safe step</h2><p>Use the agent to refresh sources, prepare work, or request a consent-safe external action.</p></section>{Object.entries(collections).map(([name, items]) => <section key={name}><h2>{labels[name]}</h2>{items.length ? items.map(item => <Card key={item.id} item={item}/>) : <p>No records.</p>}</section>)}<footer>Local session only. No cloud sync, forms, evidence files, or edit controls.</footer></main>;
 }
 createRoot(document.getElementById('root')).render(<App/>);
