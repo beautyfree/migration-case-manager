@@ -1,0 +1,8 @@
+{
+  "name": "migration-case-manager",
+  "version": "0.1.0",
+  "description": "Portable Markdown-first migration case planning and execution.",
+  "author": {
+    "name": "beautyfree"
+  }
+}

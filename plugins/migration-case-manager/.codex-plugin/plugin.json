@@ -1,0 +1,22 @@
+{
+  "name": "migration-case-manager",
+  "version": "0.1.0",
+  "description": "Portable Markdown-first migration case planning and execution for Codex.",
+  "author": {
+    "name": "beautyfree"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Migration Case Manager",
+    "shortDescription": "Plan and execute a relocation case safely.",
+    "longDescription": "Build a source-backed migration case, document matrix, timeline and consent-aware browser action queue in portable Markdown files.",
+    "developerName": "Local developer",
+    "category": "Productivity",
+    "capabilities": ["Research", "Write", "Interactive"],
+    "defaultPrompt": [
+      "Create a migration case for my planned move.",
+      "Research official requirements for my migration route.",
+      "Turn my migration case into a consent-aware action queue."
+    ]
+  }
+}

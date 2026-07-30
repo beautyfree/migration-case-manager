@@ -1,0 +1,4 @@
+interface:
+  display_name: "Migration Actions"
+  short_description: "Execute consent-aware relocation actions"
+  default_prompt: "Use $migration-actions to turn my migration plan into actions."

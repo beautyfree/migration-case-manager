@@ -1,0 +1,4 @@
+interface:
+  display_name: "Migration Case Manager"
+  short_description: "Create and coordinate a relocation case"
+  default_prompt: "Use $migration-case-manager to create a migration case folder."

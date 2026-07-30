@@ -1,0 +1,20 @@
+{
+  "name": "migration-case-manager",
+  "interface": {
+    "displayName": "Migration Case Manager"
+  },
+  "plugins": [
+    {
+      "name": "migration-case-manager",
+      "source": {
+        "source": "local",
+        "path": "./plugins/migration-case-manager"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

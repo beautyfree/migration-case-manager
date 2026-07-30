@@ -1,0 +1,4 @@
+interface:
+  display_name: "Migration Research"
+  short_description: "Verify route rules from official sources"
+  default_prompt: "Use $migration-research to verify my migration route requirements."
