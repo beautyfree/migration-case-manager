@@ -32,11 +32,11 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 
 | Field | Value |
 | --- | --- |
-| Product phase | R7 — Local web application |
-| Current item | R7 release complete |
-| Current status | `done` |
-| Next concrete outcome | Use a private live case; future work is route-pack depth and optional encrypted sync, not mandatory hosted infrastructure. |
-| Primary blocker | None at the local-web-app level. Cloud sync remains deliberately outside the mandatory core. |
+| Product phase | R8 — Portable native runtime |
+| Current item | R8-01 — runtime and CLI contract |
+| Current status | `ready` |
+| Next concrete outcome | Replace the end-user Bun/Python/Node dependency chain with a signed, checksum-verified native `migration-os` binary that an installed agent can bootstrap and invoke on the user's machine. |
+| Primary blocker | None for architecture and core migration. Signing/notarization credentials are required only before the non-developer public-release gate. |
 | Canonical case data | Markdown case folder outside the plugin and outside Git. |
 | Current repository | `https://github.com/beautyfree/migration-case-manager` |
 
@@ -150,6 +150,43 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 - Markdown case files remain the authority and the UI can be stopped/deleted without data loss.
 - No UI path bypasses the existing consent and human-only controls.
 
+## Release R8 — Portable native runtime
+
+**Outcome:** a non-developer on macOS, Windows, or Linux can install the agent plugin, ask it to create or open a case, and receive the local Migration OS UI without manually installing Bun, Node, npm, Python, or project dependencies. The Markdown case remains local and authoritative.
+
+**Architecture decision:** TypeScript and Bun remain build-time technologies. The end-user interface is a platform-specific, self-contained `migration-os` executable. `npx` is allowed only as an optional developer convenience: it is not a supported user installation path because it requires Node/npm. The plugin downloads only the matching binary from a version-pinned release, verifies its SHA-256 checksum, then invokes it from a user-owned application-data directory. It must never silently update the binary, upload a case, or expose the local server beyond loopback.
+
+| ID | Status | Work | Acceptance criteria | Depends on |
+| --- | --- | --- | --- | --- |
+| `R8-01` | `ready` | Write the runtime ADR and machine-readable CLI contract. | Defines supported platform/architecture matrix, binary naming/versioning, local storage paths, JSON response envelope, error codes, `next_actions`, no-network-by-default policy, upgrade/rollback semantics, and the exact compatibility contract for a Markdown case. | `R7` |
+| `R8-02` | `planned` | Make `migration-os serve` truly standalone. | A compiled binary embeds the React assets rather than resolving `dist/` beside itself; copied alone to a temporary directory, it can serve a fixture case, open the browser, reject unauthenticated API access, and stop cleanly. | `R8-01` |
+| `R8-03` | `planned` | Extract a TypeScript case-core library. | One tested parser/writer owns frontmatter, typed records, IDs, safe Markdown updates, JSONL state, sensitive-field guards, and structured errors. UI and CLI use this same library; Markdown remains the only durable case store. | `R8-01` |
+| `R8-04` | `planned` | Port deterministic Python case operations. | `init`, `validate`, `render`, migration, document dates/quality, logistics readiness, arrival lane, resilience branches, and provider-comparison shell run through `migration-os`; golden fixtures and negative tests match the current Python behaviour before Python is removed from the skills. | `R8-03` |
+| `R8-05` | `planned` | Port the source-refresh engine with explicit network policy. | `migration-os sources refresh` records only public URL/hash/date state, has timeout/redirect/domain controls, supports `--dry-run`, and preserves `new`, `changed`, `unavailable`, and `stale` semantics. Live runs remain agent-initiated and never transmit case data. | `R8-03` |
+| `R8-06` | `planned` | Build reproducible multi-platform artifacts in CI. | Release workflow produces checksummed binaries for macOS arm64/x64, Windows x64/arm64, Linux x64 glibc/musl, and Linux arm64 glibc/musl; x64 baseline variants are used where needed for older CPUs. Each artifact passes `doctor`, `init`, `validate`, and `serve` smoke tests. | `R8-02`, `R8-05` |
+| `R8-07` | `planned` | Add a safe plugin bootstrapper. | On first use, the installed Codex/Claude skill detects OS/architecture, presents the exact release/version/download, downloads only the matching artifact after user consent, verifies SHA-256, stores it outside the plugin cache, runs `doctor`, and reports a recovery command. Existing binary remains usable if an upgrade fails. | `R8-06` |
+| `R8-08` | `planned` | Sign and publish user-facing releases. | macOS artifacts are code-signed and notarized; Windows artifacts are Authenticode-signed; release notes contain checksums, supported platforms, rollback guidance, and no-telemetry declaration. The public non-developer gate is blocked until signing credentials are available. | `R8-06` |
+| `R8-09` | `planned` | Switch skills, README, and agent bridge to the native CLI. | No user-facing `python3`, `bun`, `node`, or `npx` command remains in the normal flow. Skills invoke `migration-os` and explicitly use the bundled UI rather than creating a replacement. Developer build instructions are isolated in contributor docs. | `R8-04`, `R8-05`, `R8-07` |
+| `R8-10` | `planned` | Verify the real installation and safety journeys. | Clean-user tests on supported macOS, Windows, and Linux: install plugin → bootstrap binary → create a synthetic private case → open UI → queue/claim a safe request → validate → stop → uninstall. Negative tests prove checksum failure, unsupported platform, missing browser, bad Markdown, and irreversible-action consent boundaries fail safely. | `R8-08`, `R8-09` |
+
+### R8 delivery sequence and non-goals
+
+1. Build the standalone binary first (`R8-01`–`R8-02`); do not port every Python helper before proving that a binary works alone.
+2. Migrate pure, deterministic Python functions with golden fixtures (`R8-03`–`R8-04`), then source refresh (`R8-05`). Python stays available only as an internal compatibility fallback until parity passes.
+3. Produce release artifacts and a consented bootstrap path (`R8-06`–`R8-07`). Do not package every platform binary inside the agent plugin; that would make every plugin install unnecessarily large.
+4. Complete signing and clean-machine verification before claiming ordinary-user support (`R8-08`–`R8-10`).
+
+Out of scope for R8: a central case server, cloud sync, accounts, background agent wake-ups from the browser queue, automatic external submissions, booking, payment, or document storage. Those would need a separate privacy and consent proposal.
+
+### R8 release gate
+
+- A clean supported desktop needs only Codex or Claude plus the plugin; no manual runtime installation is required.
+- The agent can state which binary/version it will use and obtain explicit first-download consent.
+- The binary is checksum-verified, platform-matched, signed where the OS requires it, and never auto-updates.
+- A copied case directory works offline for `init`, `validate`, `render`, and UI inspection; source refresh is the only networked command and is explicit.
+- All legacy Python operations have parity tests; no normal skill path calls Python, Bun, Node, or npm.
+- The UI still binds only to `127.0.0.1`, serves no evidence/credentials, and preserves all existing human-confirmation boundaries.
+
 ## Permanent operating loop
 
 1. Read this roadmap and the current case dashboard.
@@ -202,3 +239,4 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 | 2026-07-30 | Completed `R7-04`: live local UI request was persisted and read by Bun agent CLI with no external action. Started `R7-05`. |
 | 2026-07-30 | Completed `R7-05`: scoped decision acceptance is the only browser mutation; no external action is wired to it. Started `R7-06`. |
 | 2026-07-30 | Completed R7 release gate: isolated Georgia end-to-end run proved loopback UI, source refresh, agent bridge, provider artifact, validation, and stop-before-irreversible-action behavior. |
+| 2026-07-30 | Added R8 portable-native-runtime plan: self-contained binary distribution, TypeScript migration away from Python, verified bootstrap, signing, and clean-machine release gate. R8-01 is the next ready item. |
