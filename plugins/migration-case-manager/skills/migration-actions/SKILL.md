@@ -5,7 +5,7 @@ description: Convert a verified migration case into safe, consent-aware browser 
 
 # Migration Actions
 
-Read `00-case.md`, `20-requirements.md`, and `60-decisions.md`; then read `../migration-case-manager/references/case-format.md`. Never execute an action based only on a generic checklist.
+Read `00-case.md`, `30-requirements.md`, and `80-decisions.md`; then read `../migration-case-manager/references/case-format.md` and [browser-runbook.md](references/browser-runbook.md). Never execute an action based only on a generic checklist.
 
 ## Build the action queue
 
@@ -27,4 +27,4 @@ Use these classes exactly:
 
 ## Completion rule
 
-An action is not complete merely because a page opened. Require the expected receipt, an explicit no-receipt reason, or a user-provided confirmation. Update `50-timeline.md` when an appointment or filing changes the critical path.
+An action is not complete merely because a page opened. Require the expected receipt, an explicit no-receipt reason, or a user-provided confirmation. Update `60-timeline.md` when an appointment or filing changes the critical path.

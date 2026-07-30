@@ -33,9 +33,9 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 | Field | Value |
 | --- | --- |
 | Product phase | R2 — Official rules and source engine |
-| Current item | `R4-01` |
+| Current item | `R4-02` |
 | Current status | `in_progress` |
-| Next concrete outcome | Formal action and receipt records ready for a later browser executor. |
+| Next concrete outcome | Validate the browser runbook on the selected real route without crossing an irreversible boundary. |
 | Primary blocker | `R2-01`: a real reference corridor is required before route-pack and document-operation acceptance. |
 | Canonical case data | Markdown case folder outside the plugin and outside Git. |
 | Current repository | `https://github.com/beautyfree/migration-case-manager` |
@@ -104,10 +104,10 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 
 | ID | Status | Work | Acceptance criteria | Depends on |
 | --- | --- | --- | --- | --- |
-| `R4-01` | `planned` | Define executable action and receipt schema. | Actions encode dependencies, scope, consent class, official URL/provider, expected receipt, state, owner, and deadline. | `R1` |
-| `R4-02` | `planned` | Add browser runbook protocol. | Domain verified before data entry; all irreversible controls stop for confirmation. | `R4-01`, `R2-04` |
+| `R4-01` | `done` | Define executable action and receipt schema. | Actions encode dependencies, scope, consent class, official URL/provider, expected receipt, state, owner, and deadline. | `R1` |
+| `R4-02` | `in_progress` | Add browser runbook protocol. | Domain verified before data entry; all irreversible controls stop for confirmation. | `R4-01`, `R2-04` |
 | `R4-03` | `planned` | Add appointment/provider workflow. | Search, comparison, user selection, booking confirmation, and reschedule/cancel states are distinguished. | `R3-04`, `R4-02` |
-| `R4-04` | `planned` | Add action status and receipt verification. | A page opening cannot close an action; a receipt or reason is required. | `R4-01` |
+| `R4-04` | `done` | Add action status and receipt verification. | A page opening cannot close an action; a receipt or reason is required. | `R4-01` |
 
 ## Release R5 — Landing OS
 
@@ -156,3 +156,4 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 | 2026-07-30 | Completed `R1-02`–`R1-04`: v2 templates are now tracked; v1 migration preserves source checksums and passes v2 validation; validator rejects nine representative contract violations. Started `R1-05`. |
 | 2026-07-30 | Completed R1 release gate: renderer and three contract tests cover happy, invalid, and non-destructive migration cases. Completed `R2-02` from the v2 source contract and freshness validator; started `R2-03`. |
 | 2026-07-30 | Completed `R2-03`: conflict protocol now preserves each official source and validator rejects a requirement that silently proceeds despite a conflict. Started `R4-01`; R2 route-pack work remains blocked on the reference corridor. |
+| 2026-07-30 | Completed `R4-01` and `R4-04` from the v2 action/receipt contract and validator; added generic browser runbook and started `R4-02`. |
