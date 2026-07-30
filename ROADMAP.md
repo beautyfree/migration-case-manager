@@ -137,7 +137,7 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 | ID | Status | Work | Acceptance criteria | Depends on |
 | --- | --- | --- | --- | --- |
 | `R7-01` | `done` | Define local-app contract and package boundary. | `local-app-contract.md` defines loopback/session rules, Markdown authority, safe API/events, consent boundaries, and packaging. Existing contract suite stayed green. | `R6` |
-| `R7-02` | `done` | Package React app and local server launcher. | Prebuilt React/Vite assets are packaged in the plugin; `launch_ui.py` binds `127.0.0.1` on an ephemeral port, boots a 256-bit token session, uses HttpOnly SameSite cookie bootstrap, and writes ignored local runtime state. Manual launch succeeded on the Georgia case; no user Node install is needed. | `R7-01` |
+| `R7-02` | `done` | Package React app and local server launcher. | Prebuilt React/Vite assets are packaged in the plugin; Bun-native CLI `serve` binds `127.0.0.1` on an ephemeral port, boots a 256-bit token session, uses HttpOnly SameSite cookie bootstrap, and writes ignored local runtime state. It can compile to a standalone executable; no Python or Node runtime is needed by the user. | `R7-01` |
 | `R7-03` | `done` | Implement read-only case API and live React views. | Token-protected `/api/data` exposes only parsed case metadata/records; React shows routes/source freshness, documents, consent actions, timeline, appointments, and landing records. Live Georgia check proved 403 without cookie and data access after token bootstrap. | `R7-02` |
 | `R7-04` | `in_progress` | Add agent request bridge. | UI can create a structured request; an agent can claim it, write verified results to the case, and return a visible event. | `R7-03` |
 | `R7-05` | `planned` | Add consent-safe mutations. | Scoped UI actions create validated case records; confirmation-required actions stop before external effects. | `R7-04` |
@@ -198,3 +198,4 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 | 2026-07-30 | Completed `R7-01`: recorded local-app authority, security, lifecycle, API, bridge, and consent contract. Started `R7-02`. |
 | 2026-07-30 | Completed `R7-02`: packaged prebuilt React assets and a token-protected loopback launcher, manually started against the Georgia case. Started `R7-03`. |
 | 2026-07-30 | Completed `R7-03`: live case API and React records views are token-protected and manually exercised on the Georgia case. Started `R7-04`. |
+| 2026-07-30 | Architecture correction by user: replaced Python local-app runtime with Bun CLI/daemon and standalone compilation path. |

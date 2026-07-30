@@ -7,3 +7,4 @@ __pycache__/
 **/99-dashboard.html
 **/.migration-os/
 plugins/migration-case-manager/apps/migration-os-ui/node_modules/
+plugins/migration-case-manager/apps/migration-os-ui/bin/

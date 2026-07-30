@@ -33,6 +33,18 @@ To move a v1 case to v2, preserve the source and run:
 python3 scripts/migrate_case.py <v1-case-directory> <new-v2-case-directory>
 ```
 
+## Open the local Migration OS UI
+
+The local UI is Bun-native. From `apps/migration-os-ui`, use:
+
+```bash
+bun run serve <case-directory>
+bun run status <case-directory>
+bun run stop <case-directory>
+```
+
+`serve` opens a token-protected UI bound only to `127.0.0.1`. It is a local daemon for one case, not a hosted service. Never expose its port or URL outside the user's machine. Maintainers can create a standalone executable with `bun run compile`; no Python runtime is used by the UI.
+
 Report missing evidence, stale sources, unresolved decisions, and actions requiring the person's confirmation. Never call a visa outcome, entry, or legal eligibility guaranteed.
 
 ## Required safety boundaries

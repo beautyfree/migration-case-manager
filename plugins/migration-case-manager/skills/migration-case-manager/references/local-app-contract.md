@@ -33,4 +33,4 @@ Only schema-limited local mutations are allowed: create a request, propose/accep
 
 ## Packaging
 
-React is prebuilt into static assets under the plugin. A stdlib Python local server serves the assets and API so the user does not need to install Node or run a package manager. Node/Vite may be used only by maintainers to rebuild assets.
+React is prebuilt into static assets under the plugin. A Bun CLI serves the assets and API and can be compiled to a standalone executable with `bun build --compile`. Node is not a runtime requirement; Bun/Vite are maintainer build tooling only.
