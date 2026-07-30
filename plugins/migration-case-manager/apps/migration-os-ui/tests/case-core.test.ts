@@ -24,7 +24,9 @@ describe("case core", () => {
     expect(loaded.case.case_id).toBe("CASE-001");
     expect(loaded.collections.requirements.some(item => item.id === "REQ-001" && item.kind === "REQ")).toBe(true);
     expect(parseFrontmatter("---\ncase_id: CASE-X\n---\n")).toEqual({ case_id: "CASE-X" });
+    expect(parseFrontmatter("---\r\ncase_id: CASE-X\r\n---\r\n")).toEqual({ case_id: "CASE-X" });
     expect(parseRecords("## DOC-001 — Passport\n- Status: unknown\n")[0]).toMatchObject({ id: "DOC-001", kind: "DOC", title: "Passport" });
+    expect(parseRecords("## DOC-001 — Passport\r\n- Status: unknown\r\n")[0]).toMatchObject({ id: "DOC-001", kind: "DOC", title: "Passport", fields: { Status: "unknown" } });
   });
 
   test("writes only named source files and rejects sensitive values", () => {

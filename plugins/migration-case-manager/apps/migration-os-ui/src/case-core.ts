@@ -25,17 +25,19 @@ const fieldLine = /^- ([^:]+):\s*(.+)$/gm;
 const sensitive = /(?i:password|passcode|one.time.code|passport[_ -]?number|card[_ -]?number|recovery[_ -]?code|iban|account[_ -]?number|wallet[_ -]?address|bank[_ -]?details|balance)\s*[:=]/;
 const writableCaseFiles = new Set(Object.values(caseFiles));
 
+export function normalizeCaseText(text: string): string { return text.replace(/\r\n?/g, "\n"); }
+
 export function parseFrontmatter(text: string): Record<string, string> {
-  const hit = text.match(/^---\n([\s\S]*?)\n---/);
+  const hit = normalizeCaseText(text).match(/^---\n([\s\S]*?)\n---/);
   if (!hit) return {};
   return Object.fromEntries(hit[1].split("\n").filter(line => line.includes(":"))
     .map(line => line.split(/:(.*)/s).slice(0, 2).map(part => part.trim())));
 }
 
 export function parseRecords(text: string): RecordItem[] {
-  const hits = [...text.matchAll(recordHeading)];
+  const normalized = normalizeCaseText(text), hits = [...normalized.matchAll(recordHeading)];
   return hits.map((hit, index) => {
-    const body = text.slice(hit.index! + hit[0].length, hits[index + 1]?.index);
+    const body = normalized.slice(hit.index! + hit[0].length, hits[index + 1]?.index);
     const fields = Object.fromEntries([...body.matchAll(fieldLine)].map(field => [field[1].trim(), field[2].trim()]));
     return { id: hit[1], kind: hit[2], title: hit[3], fields };
   });
