@@ -32,6 +32,10 @@ LOGISTICS_SPEC = importlib.util.spec_from_file_location("logistics_readiness", S
 assert LOGISTICS_SPEC and LOGISTICS_SPEC.loader
 LOGISTICS = importlib.util.module_from_spec(LOGISTICS_SPEC)
 LOGISTICS_SPEC.loader.exec_module(LOGISTICS)
+RETRO_SPEC = importlib.util.spec_from_file_location("retrospective_readiness", SCRIPTS / "retrospective_readiness.py")
+assert RETRO_SPEC and RETRO_SPEC.loader
+RETRO = importlib.util.module_from_spec(RETRO_SPEC)
+RETRO_SPEC.loader.exec_module(RETRO)
 
 
 def run(script: str, *args: Path, expected: int = 0) -> subprocess.CompletedProcess[str]:
@@ -406,6 +410,16 @@ class CaseToolsTest(unittest.TestCase):
             self.assertIn("family-evidence", branch.read_text(encoding="utf-8"))
             second = run("create_resilience_branch.py", case, Path("dependent"), expected=2)
             self.assertIn("refusing to overwrite", second.stderr)
+
+    def test_retrospective_readiness_requires_sanitized_completed_cases(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            directory = Path(temp)
+            (directory / "draft.md").write_text("---\nretrospective_id: RETRO-001\nsanitized: no\ncompleted_at: unknown\n---\n", encoding="utf-8")
+            for index in range(2, 5):
+                (directory / f"retro-{index}.md").write_text(f"---\nretrospective_id: RETRO-00{index}\nsanitized: yes\ncompleted_at: 2026-07-30\n---\n", encoding="utf-8")
+            count, lines = RETRO.report(directory)
+            self.assertEqual(count, 3)
+            self.assertIn("not eligible: draft.md", lines[0])
 
 
 if __name__ == "__main__":

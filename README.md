@@ -67,6 +67,7 @@ python3 plugins/migration-case-manager/skills/migration-case-manager/scripts/cre
 python3 plugins/migration-case-manager/skills/migration-case-manager/scripts/logistics_readiness.py ~/migration-cases/brazil-dnv-2026
 python3 plugins/migration-case-manager/skills/migration-case-manager/scripts/arrival_phase.py ~/migration-cases/brazil-dnv-2026
 python3 plugins/migration-case-manager/skills/migration-case-manager/scripts/create_resilience_branch.py ~/migration-cases/brazil-dnv-2026 dependent --owner PERSON-003
+python3 plugins/migration-case-manager/skills/migration-case-manager/scripts/retrospective_readiness.py ~/migration-case-retrospectives
 ```
 
 The generated case contains numbered Markdown source files. `99-dashboard.md` is derived output; update the source files and render again rather than editing it.

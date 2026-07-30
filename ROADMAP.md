@@ -171,3 +171,4 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 | 2026-07-30 | Completed `R5-01`: added safe landing logistics records, readiness reporting, and financial-data guardrails. Started `R5-02`. |
 | 2026-07-30 | Completed `R5-02`: landing lane is now date-driven and visible in the dashboard. Started `R5-03`. |
 | 2026-07-30 | Completed `R5-03` and the R5 release: added explicit resilience branches for dependants and recovery scenarios. R6 remains blocked on real sanitized case retrospectives; do not invent a UI requirement before those exist. |
+| 2026-07-30 | Prepared R6 intake without fabricating cases: added a sanitized retrospective template and readiness checker. R6-01 remains blocked until at least three real completed, sanitized retrospectives are collected. |
