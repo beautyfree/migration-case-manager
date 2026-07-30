@@ -28,3 +28,7 @@ Before returning research:
 - Identify expiring documents and upstream prerequisites.
 - Add actions only as proposals; `$migration-actions` owns execution state.
 - Tell the user what was verified today and what must be rechecked later.
+
+## Refresh existing research
+
+Before relying on an existing route pack, run `../migration-case-manager/scripts/refresh_sources.py <case-directory>`. It stores only public-page hashes in the ignored `.migration-os/source-state.json` file and reports `new`, `changed`, `unavailable`, and `stale` source records. A changed or unavailable source invalidates any legal conclusion drawn from the prior page: inspect it, update the `SRC-*` record and affected `REQ-*` records, then render the dashboard again.

@@ -33,10 +33,10 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 | Field | Value |
 | --- | --- |
 | Product phase | R2 — Official rules and source engine |
-| Current item | `R2-05` |
+| Current item | `R3-01` |
 | Current status | `in_progress` |
-| Next concrete outcome | Add a source-refresh diff that detects changed, unavailable, stale, and new snapshots in a case. |
-| Primary blocker | No implementation blocker; the Georgia case still has user decisions that prevent filings but not source monitoring. |
+| Next concrete outcome | Make every document's transformation chain explicit and validate that the chain is legal and actionable. |
+| Primary blocker | No implementation blocker; Georgia-specific document requirements remain conditional on the residence route and official recheck. |
 | Canonical case data | Markdown case folder outside the plugin and outside Git. |
 | Current repository | `https://github.com/beautyfree/migration-case-manager` |
 
@@ -79,7 +79,7 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 | `R2-02` | `done` | Add source records and freshness policy to schema. | Every `SRC-*` includes publisher, official URL, retrieved date, update date if known, applicability, and recheck date. | `R1` |
 | `R2-03` | `done` | Build route research workflow and source-conflict handling. | Conflicting official pages preserve both claims and mark the requirement blocked; no silent choice. | `R2-02` |
 | `R2-04` | `done` | Create first route pack from live primary sources. | The sanitized Russia → Georgia family/IE reference case has five linked route requirements, six official-source records, retrieval/freshness dates, explicit conditions, and a rendered dashboard. `validate_case.py` passed with 0 warnings on 2026-07-30. | `R2-01`, `R2-03` |
-| `R2-05` | `in_progress` | Add source refresh diff. | Rechecking a case identifies new, changed, unavailable, and stale sources. | `R2-02`, `R2-04` |
+| `R2-05` | `done` | Add source refresh diff. | `refresh_sources.py` stores only public URL/hash/retrieval metadata in ignored case state and reports `new`, `changed`, `unavailable`, and `stale`; deterministic test covers all states and a live dry run read all six Georgia sources on 2026-07-30. | `R2-02`, `R2-04` |
 
 ### R2 release gate
 
@@ -93,7 +93,7 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 
 | ID | Status | Work | Acceptance criteria | Depends on |
 | --- | --- | --- | --- | --- |
-| `R3-01` | `planned` | Model document transformations. | Original, copy, apostille, translation, upload and expiry variants are represented without storing raw document data. | `R1`, `R2-04` |
+| `R3-01` | `in_progress` | Model document transformations. | Original, copy, apostille, translation, upload and expiry variants are represented without storing raw document data. | `R1`, `R2-04` |
 | `R3-02` | `planned` | Add document validity and latest-safe-date computation. | Fixture catches an item ordered too early or too late. | `R3-01` |
 | `R3-03` | `planned` | Add document quality gate. | Checks all-pages, legibility, name consistency, language, and required legalization state as explicit results. | `R3-01` |
 | `R3-04` | `planned` | Add provider research runbook. | Agent can compare notary, translator, apostille, or visa-center candidates and present evidence before selection. | `R2-04` |
@@ -160,3 +160,4 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 | 2026-07-30 | Marked `R4-02` blocked: generic protocol is implemented, but its required live route/domain verification depends on `R2-04`, which cannot begin without `DEC-PROD-001`. |
 | 2026-07-30 | Completed `R2-01`: the first reference corridor is Russia → Georgia for a family of three, with individual-entrepreneur registration as the intended economic step. Started `R2-04`; live primary-source research is in progress. |
 | 2026-07-30 | Completed `R2-04` and `R4-02`: added a sanitized, validated, source-linked Georgia reference case and exercised its dashboard. Started `R2-05` to make source freshness observable over time. |
+| 2026-07-30 | Completed `R2-05`: added source-refresh diff with safe hash-only state, deterministic coverage for new/changed/unavailable/stale states, and a successful live Georgia dry run. Started `R3-01`. |

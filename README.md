@@ -60,11 +60,14 @@ Create a case folder outside the plugin and outside version control containing s
 python3 plugins/migration-case-manager/skills/migration-case-manager/scripts/create_case.py ~/migration-cases/brazil-dnv-2026
 python3 plugins/migration-case-manager/skills/migration-case-manager/scripts/validate_case.py ~/migration-cases/brazil-dnv-2026
 python3 plugins/migration-case-manager/skills/migration-case-manager/scripts/render_case.py ~/migration-cases/brazil-dnv-2026
+python3 plugins/migration-case-manager/skills/migration-case-manager/scripts/refresh_sources.py ~/migration-cases/brazil-dnv-2026
 ```
 
 The generated case contains numbered Markdown source files. `99-dashboard.md` is derived output; update the source files and render again rather than editing it.
 
 The bundled reference case is deliberately incomplete where a legal conclusion depends on personal facts. It shows the operational distinction between entry/stay, IE registration, tax status, a work residence permit, and family reunification; copy records into a private case rather than editing the example.
+
+`refresh_sources.py` records only public URLs, retrieval dates, and content hashes in the ignored `.migration-os/source-state.json`. Its first run reports sources as `new`; subsequent runs detect changed pages, fetch failures, and source records past `Fresh until`.
 
 ## Safety model
 

@@ -4,14 +4,22 @@
 from __future__ import annotations
 
 import hashlib
+import importlib.util
+import json
 import subprocess
 import tempfile
 import unittest
 from pathlib import Path
+from urllib.error import URLError
 
 
 PLUGIN_ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = PLUGIN_ROOT / "skills" / "migration-case-manager" / "scripts"
+
+REFRESH_SPEC = importlib.util.spec_from_file_location("refresh_sources", SCRIPTS / "refresh_sources.py")
+assert REFRESH_SPEC and REFRESH_SPEC.loader
+REFRESH = importlib.util.module_from_spec(REFRESH_SPEC)
+REFRESH_SPEC.loader.exec_module(REFRESH)
 
 
 def run(script: str, *args: Path, expected: int = 0) -> subprocess.CompletedProcess[str]:
@@ -173,6 +181,48 @@ class CaseToolsTest(unittest.TestCase):
             self.assertEqual(before, after)
             self.assertTrue((v2 / "98-migration-report.md").is_file())
             run("validate_case.py", v2)
+
+    def test_source_refresh_detects_new_changed_unavailable_and_stale(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            case = Path(temp) / "case"
+            run("create_case.py", case)
+            append(case / "30-requirements.md", """
+## SRC-001 — Available source
+
+- Publisher: Example authority
+- Official URL: https://authority.example/available
+- Retrieved: 2026-07-30
+- Updated: unknown
+- Applies to: ROUTE-001
+- Rule summary: Synthetic source.
+- Fresh until: 2099-01-01
+- Status: current
+
+## SRC-002 — Unavailable source
+
+- Publisher: Example authority
+- Official URL: https://authority.example/unavailable
+- Retrieved: 2026-07-30
+- Updated: unknown
+- Applies to: ROUTE-001
+- Rule summary: Synthetic source.
+- Fresh until: 2026-07-29
+- Status: needs_recheck
+""")
+            state = case / ".migration-os" / "source-state.json"
+            def first_fetch(url: str) -> bytes:
+                if url.endswith("unavailable"):
+                    raise URLError("offline fixture")
+                return b"first public page"
+            first = REFRESH.refresh(case, state, "2026-07-30", fetcher=first_fetch)
+            self.assertIn("SRC-001: new", first[0])
+            self.assertIn("SRC-002: unavailable", first[1])
+            stored = json.loads(state.read_text(encoding="utf-8"))
+            self.assertIn("SRC-001", stored["sources"])
+            self.assertNotIn("SRC-002", stored["sources"])
+            second = REFRESH.refresh(case, state, "2026-07-31", fetcher=lambda _url: b"changed public page")
+            self.assertIn("SRC-001: changed", second[0])
+            self.assertIn("SRC-002: new, stale", second[1])
 
 
 if __name__ == "__main__":
