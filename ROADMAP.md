@@ -32,11 +32,11 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 
 | Field | Value |
 | --- | --- |
-| Product phase | R2 — Official rules and source engine |
-| Current item | `R5-03` |
-| Current status | `in_progress` |
-| Next concrete outcome | Add explicit dependant and resilience branches, including urgent recovery states. |
-| Primary blocker | The Georgia case has a spouse and infant but no selected residence path; branch modelling can proceed without treating requirements as decided. |
+| Product phase | R6 — Local visual renderer discovery |
+| Current item | `R6-01` / `DEC-PROD-003` |
+| Current status | `blocked` |
+| Next concrete outcome | Collect 3–5 sanitized real case retrospectives before choosing a local visual renderer. |
+| Primary blocker | No real sanitized case retrospectives exist yet; a UI without these would be a second guessed product, not a renderer of proven case needs. |
 | Canonical case data | Markdown case folder outside the plugin and outside Git. |
 | Current repository | `https://github.com/beautyfree/migration-case-manager` |
 
@@ -118,7 +118,7 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 | --- | --- | --- | --- | --- |
 | `R5-01` | `done` | Add finance and logistics lane. | `LOG-*` records now validate areas and statuses; `logistics_readiness.py` surfaces missing core areas. Georgia reference case covers housing, insurance, connectivity, transport, cash, and banking without sensitive financial data. Test verifies omission reporting and secret guard. | `R1`, `R2-04` |
 | `R5-02` | `done` | Add 72-hour, 30-day, and 90-day landing workflows. | Required `move_date` and `arrival_phase.py` select pre-move, 72-hour, 30-day, 90-day, or stabilize lane; dashboard exposes the lane. Tests verify transition and unknown dates stay explicit. | `R5-01`, `R4` |
-| `R5-03` | `in_progress` | Add family and resilience branches. | Dependants, pets, school, lost documents, and urgent “already abroad” recovery are explicit case branches. | `R3`, `R5-02` |
+| `R5-03` | `done` | Add family and resilience branches. | `create_resilience_branch.py` creates non-destructive `dependent`, `school`, `pet`, `lost_document`, and `urgent_abroad` work queues; the action skill defines human-only and emergency boundaries. Contract test verifies safe branch creation and overwrite refusal. | `R3`, `R5-02` |
 | `R5-03` | `planned` | Add family and resilience branches. | Dependants, pets, school, lost documents, and urgent “already abroad” recovery are explicit case branches. | `R3`, `R5-02` |
 
 ## Release R6 — Local visual renderer
@@ -170,3 +170,4 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 | 2026-07-30 | Completed `R4-03`: added validated appointment lifecycle records and migration support. Started `R5-01`. |
 | 2026-07-30 | Completed `R5-01`: added safe landing logistics records, readiness reporting, and financial-data guardrails. Started `R5-02`. |
 | 2026-07-30 | Completed `R5-02`: landing lane is now date-driven and visible in the dashboard. Started `R5-03`. |
+| 2026-07-30 | Completed `R5-03` and the R5 release: added explicit resilience branches for dependants and recovery scenarios. R6 remains blocked on real sanitized case retrospectives; do not invent a UI requirement before those exist. |

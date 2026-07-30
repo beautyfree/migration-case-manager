@@ -19,6 +19,8 @@ Use these classes exactly:
 
 For a local provider, read [provider-research.md](references/provider-research.md) before searching. Present the source-linked comparison before selection; never turn a search result into an implied provider choice.
 
+For a dependant, school, pet, lost-document, or already-abroad urgent path, read [resilience-branches.md](references/resilience-branches.md) and create the matching branch before researching. Emergency/safety handoff always takes priority over case bookkeeping.
+
 ## Execute safely
 
 1. Verify the website domain and route against `SRC-*` before entering information.

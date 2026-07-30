@@ -17,3 +17,5 @@ It deliberately separates four questions that generic migration guides commonly 
 To turn this into a private live case, run `create_case.py` outside the repository, copy only the non-sensitive records, then replace `unknown` facts and source dates. Never commit actual passports, birth certificates, document numbers, addresses, credentials, or receipts.
 
 Before any application, payment, booking, or upload, execute the linked action under the consent class recorded in `50-actions.md` and refresh all sources that have reached `Fresh until`.
+
+This reference family has an infant. A private live case should create a `dependent` resilience branch before travel-document, care, or family-reunification work is treated as ready.

@@ -396,6 +396,17 @@ class CaseToolsTest(unittest.TestCase):
             result = run("arrival_phase.py", case, Path("--as-of"), Path("2026-07-20"))
             self.assertIn("arrival_30d", result.stdout)
 
+    def test_resilience_branch_is_safe_and_non_destructive(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            case = Path(temp) / "case"
+            run("create_case.py", case)
+            first = run("create_resilience_branch.py", case, Path("dependent"), Path("--owner"), Path("PERSON-003"))
+            self.assertIn("Created resilience branch", first.stdout)
+            branch = case / "resilience" / "dependent.md"
+            self.assertIn("family-evidence", branch.read_text(encoding="utf-8"))
+            second = run("create_resilience_branch.py", case, Path("dependent"), expected=2)
+            self.assertIn("refusing to overwrite", second.stderr)
+
 
 if __name__ == "__main__":
     unittest.main()
