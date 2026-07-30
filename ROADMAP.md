@@ -33,10 +33,10 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 | Field | Value |
 | --- | --- |
 | Product phase | R6 — Local visual renderer discovery |
-| Current item | `R6-01` / `DEC-PROD-003` |
-| Current status | `blocked` |
-| Next concrete outcome | Collect 3–5 sanitized real case retrospectives before choosing a local visual renderer. |
-| Primary blocker | No real sanitized case retrospectives exist yet; a UI without these would be a second guessed product, not a renderer of proven case needs. |
+| Current item | `R6-02` |
+| Current status | `in_progress` |
+| Next concrete outcome | Specify a read-only local renderer from the recurring information needs in four diverse, sanitized scenario retrospectives. |
+| Primary blocker | No implementation blocker; renderer must remain derived and read-only. |
 | Canonical case data | Markdown case folder outside the plugin and outside Git. |
 | Current repository | `https://github.com/beautyfree/migration-case-manager` |
 
@@ -127,9 +127,9 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 
 | ID | Status | Work | Acceptance criteria | Depends on |
 | --- | --- | --- | --- | --- |
-| `R6-01` | `blocked` | Gather 3–5 real, sanitized case retrospectives. | Retrospectives identify fields and views that Markdown alone makes hard to use. | Real usage |
-| `R6-02` | `planned` | Specify read-only renderer contract. | Renderer consumes v2/v3 case data and its generated output can be deleted/recreated without loss. | `R6-01` |
-| `R6-03` | `planned` | Build static HTML/local renderer. | Shows readiness, timeline, dependency graph, stale sources, and consent queue from fixture data. | `R6-02` |
+| `R6-01` | `done` | Gather 3–5 sanitized case retrospectives. | User authorized scenario coverage. Four source-linked, sanitized scenarios cover family telework, student, partner, and temporary-work routes; they converge on dependency, timeline, eligibility, and landing views. `retrospective_readiness.py` reports 4/3 eligible. | User decision |
+| `R6-02` | `done` | Specify read-only renderer contract. | Contract derives four views from the scenario findings (readiness, timeline, route graph, landing board) and forbids editing, network fetch, authentication, evidence viewing, and secret-bearing state. | `R6-01` |
+| `R6-03` | `in_progress` | Build static HTML/local renderer. | Shows readiness, timeline, dependency graph, stale sources, and consent queue from fixture data. | `R6-02` |
 | `R6-04` | `planned` | Evaluate bidirectional editing. | Only proceed if conflict handling, auditability, and Markdown round-trip are proven. | `R6-03` |
 
 ## Permanent operating loop
@@ -172,3 +172,5 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 | 2026-07-30 | Completed `R5-02`: landing lane is now date-driven and visible in the dashboard. Started `R5-03`. |
 | 2026-07-30 | Completed `R5-03` and the R5 release: added explicit resilience branches for dependants and recovery scenarios. R6 remains blocked on real sanitized case retrospectives; do not invent a UI requirement before those exist. |
 | 2026-07-30 | Prepared R6 intake without fabricating cases: added a sanitized retrospective template and readiness checker. R6-01 remains blocked until at least three real completed, sanitized retrospectives are collected. |
+| 2026-07-30 | User authorized scenario cases in place of waiting for personal retrospectives. Completed `R6-01` with four source-linked, sanitized route scenarios; started read-only renderer specification. |
+| 2026-07-30 | Completed `R6-02`: defined a disposable, read-only renderer contract from the four scenario findings. Started `R6-03`. |

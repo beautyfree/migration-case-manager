@@ -72,6 +72,8 @@ python3 plugins/migration-case-manager/skills/migration-case-manager/scripts/ret
 
 The generated case contains numbered Markdown source files. `99-dashboard.md` is derived output; update the source files and render again rather than editing it.
 
+The future local UI is governed by a [read-only renderer contract](plugins/migration-case-manager/skills/migration-case-manager/references/renderer-contract.md): it is disposable output from the Markdown case, never a second database.
+
 The bundled reference case is deliberately incomplete where a legal conclusion depends on personal facts. It shows the operational distinction between entry/stay, IE registration, tax status, a work residence permit, and family reunification; copy records into a private case rather than editing the example.
 
 `refresh_sources.py` records only public URLs, retrieval dates, and content hashes in the ignored `.migration-os/source-state.json`. Its first run reports sources as `new`; subsequent runs detect changed pages, fetch failures, and source records past `Fresh until`.
