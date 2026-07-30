@@ -8,4 +8,5 @@ for (const target of targets) {
   artifacts.push({ target, artifact:file.split("/").at(-1)!, sha256:Buffer.from(await crypto.subtle.digest("SHA-256", await Bun.file(file).arrayBuffer())).toString("hex") });
 }
 await Bun.write(`${releaseDir}/checksums.json`, `${JSON.stringify({ schema_version:1, artifacts }, null, 2)}\n`);
+await Bun.write(`${releaseDir}/checksums.txt`, artifacts.map(item => `${item.sha256}  ${item.artifact}`).join("\n") + "\n");
 console.log(JSON.stringify({ ok:true, release_dir:releaseDir, artifacts }));
