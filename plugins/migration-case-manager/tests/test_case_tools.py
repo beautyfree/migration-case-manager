@@ -52,6 +52,7 @@ def populate_happy_case(case: Path) -> None:
 - Evidence: EVD-001
 - Actions: ACT-001
 - Dependencies: none
+- Conflict: none
 - Review needed: human
 """)
     append(case / "50-actions.md", """
@@ -129,6 +130,37 @@ class CaseToolsTest(unittest.TestCase):
             append(case / "10-people.md", "\n- Password: must-not-appear\n")
             result = run("validate_case.py", case, expected=1)
             self.assertIn("possible sensitive value", result.stdout)
+
+    def test_validator_rejects_silent_official_source_conflict(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            case = Path(temp) / "case"
+            run("create_case.py", case)
+            append(case / "30-requirements.md", """
+## SRC-001 — First official page
+
+- Publisher: Example authority
+- Official URL: https://authority.example/a
+- Retrieved: 2026-07-30
+- Updated: unknown
+- Applies to: ROUTE-001
+- Rule summary: Synthetic conflict.
+- Fresh until: 2099-01-01
+- Status: conflicting
+
+## REQ-001 — Incorrectly ready requirement
+
+- Source: SRC-001
+- Applies to: PERSON-001
+- Condition: always
+- Status: ready
+- Evidence: none
+- Actions: none
+- Dependencies: none
+- Conflict: none
+- Review needed: none
+""")
+            result = run("validate_case.py", case, expected=1)
+            self.assertIn("must block and escalate conflicting official sources", result.stdout)
 
     def test_v1_migration_is_non_destructive_and_valid(self) -> None:
         with tempfile.TemporaryDirectory() as temp:

@@ -33,10 +33,10 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 | Field | Value |
 | --- | --- |
 | Product phase | R2 — Official rules and source engine |
-| Current item | `R2-03` |
+| Current item | `R4-01` |
 | Current status | `in_progress` |
-| Next concrete outcome | A reusable conflict-aware research workflow before the first real route pack. |
-| Primary blocker | `R2-01`: a real reference corridor is required before live route-pack acceptance. |
+| Next concrete outcome | Formal action and receipt records ready for a later browser executor. |
+| Primary blocker | `R2-01`: a real reference corridor is required before route-pack and document-operation acceptance. |
 | Canonical case data | Markdown case folder outside the plugin and outside Git. |
 | Current repository | `https://github.com/beautyfree/migration-case-manager` |
 
@@ -77,7 +77,7 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 | --- | --- | --- | --- | --- |
 | `R2-01` | `blocked` | Choose a real reference corridor and legal basis. | User confirms citizenship, current country of application, destination, basis, family shape, and target period. | User decision |
 | `R2-02` | `done` | Add source records and freshness policy to schema. | Every `SRC-*` includes publisher, official URL, retrieved date, update date if known, applicability, and recheck date. | `R1` |
-| `R2-03` | `in_progress` | Build route research workflow and source-conflict handling. | Conflicting official pages preserve both claims and mark the requirement blocked; no silent choice. | `R2-02` |
+| `R2-03` | `done` | Build route research workflow and source-conflict handling. | Conflicting official pages preserve both claims and mark the requirement blocked; no silent choice. | `R2-02` |
 | `R2-04` | `planned` | Create first route pack from live primary sources. | Every requirement in the reference case is source-linked and date-verified. | `R2-01`, `R2-03` |
 | `R2-05` | `planned` | Add source refresh diff. | Rechecking a case identifies new, changed, unavailable, and stale sources. | `R2-02`, `R2-04` |
 
@@ -155,3 +155,4 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 | 2026-07-30 | Completed `R1-01`: defined v2 contract, strict record fields, compatibility rules, and non-destructive v1 migration rules. Started `R1-02`. |
 | 2026-07-30 | Completed `R1-02`–`R1-04`: v2 templates are now tracked; v1 migration preserves source checksums and passes v2 validation; validator rejects nine representative contract violations. Started `R1-05`. |
 | 2026-07-30 | Completed R1 release gate: renderer and three contract tests cover happy, invalid, and non-destructive migration cases. Completed `R2-02` from the v2 source contract and freshness validator; started `R2-03`. |
+| 2026-07-30 | Completed `R2-03`: conflict protocol now preserves each official source and validator rejects a requirement that silently proceeds despite a conflict. Started `R4-01`; R2 route-pack work remains blocked on the reference corridor. |

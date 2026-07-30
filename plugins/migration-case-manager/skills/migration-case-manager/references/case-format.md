@@ -116,9 +116,10 @@ Use the exact field labels specified below. Link fields contain a comma-separate
 
 `REQ-*` records live in `30-requirements.md`.
 
-- Required fields: `Source`, `Applies to`, `Condition`, `Status`, `Evidence`, `Actions`, `Dependencies`, `Review needed`.
+- Required fields: `Source`, `Applies to`, `Condition`, `Status`, `Evidence`, `Actions`, `Dependencies`, `Conflict`, `Review needed`.
 - `Source` must name at least one `SRC-*`; a ready or submitted requirement cannot depend only on an unofficial source.
 - `Condition` is `always`, a specific condition, or `unknown`; never hide a condition in prose.
+- `Conflict` is `none` or `needs_reconciliation`. If any linked source is `conflicting`, the requirement must be `blocked`, its conflict must be `needs_reconciliation`, and `Review needed` must be `legal` or `human`.
 - `Review needed` is `none`, `legal`, `tax`, or `human`.
 
 ### Documents

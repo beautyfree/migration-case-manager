@@ -23,7 +23,7 @@ REQUIRED_FIELDS = {
     "PERSON": {"Role", "Citizenship", "Current lawful location", "Participation"},
     "ROUTE": {"Destination", "Legal basis", "Country of application", "Applies to", "Status", "Sources", "Decision"},
     "SRC": {"Publisher", "Official URL", "Retrieved", "Updated", "Applies to", "Rule summary", "Fresh until", "Status"},
-    "REQ": {"Source", "Applies to", "Condition", "Status", "Evidence", "Actions", "Dependencies", "Review needed"},
+    "REQ": {"Source", "Applies to", "Condition", "Status", "Evidence", "Actions", "Dependencies", "Conflict", "Review needed"},
     "DOC": {"Owner", "Type", "Status", "Required by", "Evidence", "Issued", "Expires", "Transformations", "Actions"},
     "ACT": {"Purpose", "Requirements", "Dependencies", "Status", "Class", "Owner", "Target", "Deadline", "Expected receipt", "Receipt", "Decision"},
     "MILESTONE": {"Date", "Kind", "Status", "Depends on", "Linked records", "Consequence if missed"},
@@ -153,6 +153,14 @@ def main() -> int:
             source_ids = ID_REF.findall(fields.get("Source", ""))
             if not source_ids or any(headers.get(source_id, ("", "", {}))[2].get("Status") != "current" for source_id in source_ids):
                 errors.append(f"{identifier} is {fields['Status']} without a current source")
+        if prefix == "REQ":
+            conflict = fields.get("Conflict")
+            if conflict not in {"none", "needs_reconciliation"}:
+                errors.append(f"{identifier} has invalid Conflict: {conflict}")
+            source_ids = ID_REF.findall(fields.get("Source", ""))
+            has_conflict = any(headers.get(source_id, ("", "", {}))[2].get("Status") == "conflicting" for source_id in source_ids)
+            if has_conflict and (fields.get("Status") != "blocked" or conflict != "needs_reconciliation" or fields.get("Review needed") not in {"legal", "human"}):
+                errors.append(f"{identifier} must block and escalate conflicting official sources")
         if prefix == "ACT":
             if fields.get("Class") not in {"autonomous", "confirmation_required", "human_only"}:
                 errors.append(f"{identifier} has invalid Class")

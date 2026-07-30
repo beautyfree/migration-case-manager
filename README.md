@@ -14,6 +14,8 @@ The core is shared by Codex and Claude Code. The platform-specific manifests onl
 - `migration-actions` — turns verified work into browser and real-world actions with explicit consent boundaries.
 - Markdown case templates plus local `create_case.py`, `validate_case.py`, and `render_case.py` tools.
 
+When official sources conflict, preserve both `SRC-*` records, mark the source `conflicting`, and block the linked `REQ-*`; do not select whichever answer looks easier.
+
 ## Install in Codex
 
 Add this repository as a plugin marketplace, then install the plugin:
