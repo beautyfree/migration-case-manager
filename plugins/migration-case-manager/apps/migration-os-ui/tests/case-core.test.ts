@@ -1,8 +1,9 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { assertSafeCaseWrite, loadCase, parseFrontmatter, parseRecords, writeCaseText } from "../src/case-core";
+import { validateCase } from "../src/validate";
 
 const cleanup: string[] = [];
 function fixture(): string {
@@ -30,5 +31,15 @@ describe("case core", () => {
     expect(existsSync(join(caseDir, "80-decisions.md"))).toBe(true);
     expect(() => assertSafeCaseWrite(caseDir, "../escape.md", "safe")).toThrow("CASE_WRITE_REFUSED");
     expect(() => assertSafeCaseWrite(caseDir, "80-decisions.md", "password: secret")).toThrow("CASE_WRITE_REFUSED");
+  });
+
+  test("rejects unsafe Markdown and broken references", () => {
+    const caseDir = fixture();
+    const decisionPath = join(caseDir, "80-decisions.md");
+    const original = readFileSync(decisionPath, "utf8");
+    writeFileSync(decisionPath, `${original}\n<!-- passport number: 123 -->\n`, "utf8");
+    const sensitive = validateCase(caseDir);
+    expect(sensitive.ok).toBe(false);
+    expect(sensitive.errors.some(error => error.includes("possible sensitive value"))).toBe(true);
   });
 });
