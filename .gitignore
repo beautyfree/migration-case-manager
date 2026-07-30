@@ -1,6 +1,6 @@
 __pycache__/
 *.py[cod]
 .DS_Store
-case/
-evidence/
-99-dashboard.md
+/case/
+/evidence/
+/99-dashboard.md
