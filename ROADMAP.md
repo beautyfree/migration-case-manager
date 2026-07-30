@@ -33,10 +33,10 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 | Field | Value |
 | --- | --- |
 | Product phase | R2 — Official rules and source engine |
-| Current item | `R3-03` |
+| Current item | `R3-04` |
 | Current status | `in_progress` |
-| Next concrete outcome | Add an explicit document-quality gate for pages, legibility, identity consistency, language, and legalization state. |
-| Primary blocker | Actual quality review needs private document evidence and cannot run against the sanitized public example. |
+| Next concrete outcome | Make local-provider research reproducible: compare candidates, preserve evidence, and stop before booking or payment. |
+| Primary blocker | No provider can be chosen until the user supplies city, timing, document type, and budget/availability constraints. |
 | Canonical case data | Markdown case folder outside the plugin and outside Git. |
 | Current repository | `https://github.com/beautyfree/migration-case-manager` |
 
@@ -95,7 +95,7 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 | --- | --- | --- | --- | --- |
 | `R3-01` | `done` | Model document transformations. | Document chains are now validated: known transforms only, original first, upload last, no duplicated transform or apostille/legalization combination, and apostille precedes translation. A negative fixture verifies rejection without storing raw documents. | `R1`, `R2-04` |
 | `R3-02` | `done` | Add document validity and latest-safe-date computation. | `document_dates.py` derives earliest-safe-issue and latest-safe-order dates from explicit case data and reports early-issued or late-ordering risk. A deterministic fixture proves both detections; unknown data remains explicitly insufficient. | `R3-01` |
-| `R3-03` | `in_progress` | Add document quality gate. | Checks all-pages, legibility, name consistency, language, and required legalization state as explicit results. | `R3-01` |
+| `R3-03` | `done` | Add document quality gate. | `document_quality.py` reports all-pages, legibility, name consistency, language, and legalization checks without opening evidence; validator prevents `ready` with failed or unknown applicable checks. Deterministic failed-legibility fixture passes. | `R3-01` |
 | `R3-03` | `planned` | Add document quality gate. | Checks all-pages, legibility, name consistency, language, and required legalization state as explicit results. | `R3-01` |
 | `R3-04` | `planned` | Add provider research runbook. | Agent can compare notary, translator, apostille, or visa-center candidates and present evidence before selection. | `R2-04` |
 
@@ -164,3 +164,4 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 | 2026-07-30 | Completed `R2-05`: added source-refresh diff with safe hash-only state, deterministic coverage for new/changed/unavailable/stale states, and a successful live Georgia dry run. Started `R3-01`. |
 | 2026-07-30 | Completed `R3-01`: transformation chains now have an enforceable order and safety contract. Started `R3-02`. |
 | 2026-07-30 | Completed `R3-02`: added deterministic document issue/order timing analysis; unknown input remains a visible gap. Started `R3-03`. |
+| 2026-07-30 | Completed `R3-03`: document readiness now has an explicit, evidence-free quality gate. Started `R3-04`. |

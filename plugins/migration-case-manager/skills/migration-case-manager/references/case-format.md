@@ -126,10 +126,11 @@ Use the exact field labels specified below. Link fields contain a comma-separate
 
 `DOC-*` records live in `40-documents.md`.
 
-- Required fields: `Owner`, `Type`, `Status`, `Required by`, `Evidence`, `Issued`, `Expires`, `Needed by`, `Lead time days`, `Maximum age days`, `Transformations`, `Actions`.
+- Required fields: `Owner`, `Type`, `Status`, `Required by`, `Evidence`, `Issued`, `Expires`, `Needed by`, `Lead time days`, `Maximum age days`, `Transformations`, `All pages`, `Legibility`, `Name consistency`, `Language`, `Legalization check`, `Actions`.
 - `Transformations` lists the required chain using only `original`, `copy`, `notarized_copy`, `apostille`, `legalization`, `translation`, `certified_translation`, and `upload`.
 - A non-empty chain begins with `original`; `upload`, if required, is last; never combine `apostille` and `legalization`; and place an apostille before any translation that covers it. `none` is allowed only when the transformation requirement is genuinely not yet known.
 - `Needed by` is the submission/appointment date for this document, or `unknown`. `Lead time days` is the time needed to obtain and transform it; `Maximum age days` is the issuer/authority window counted back from `Needed by`. Use non-negative integers or `unknown`. `document_dates.py` derives the earliest safe issue date and latest safe order date; it does not alter source Markdown.
+- Quality fields use `unknown`, `pass`, `fail`, or `not_applicable`. They record a human/agent review result only; never paste document contents or sensitive filenames. A document may be marked `ready` only when all applicable quality fields are `pass` or `not_applicable`.
 - `Evidence` points to `EVD-*` records or `none`; never include a direct sensitive pathname in a document record.
 
 ### Actions and receipts

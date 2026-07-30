@@ -24,7 +24,7 @@ REQUIRED_FIELDS = {
     "ROUTE": {"Destination", "Legal basis", "Country of application", "Applies to", "Status", "Sources", "Decision"},
     "SRC": {"Publisher", "Official URL", "Retrieved", "Updated", "Applies to", "Rule summary", "Fresh until", "Status"},
     "REQ": {"Source", "Applies to", "Condition", "Status", "Evidence", "Actions", "Dependencies", "Conflict", "Review needed"},
-    "DOC": {"Owner", "Type", "Status", "Required by", "Evidence", "Issued", "Expires", "Needed by", "Lead time days", "Maximum age days", "Transformations", "Actions"},
+    "DOC": {"Owner", "Type", "Status", "Required by", "Evidence", "Issued", "Expires", "Needed by", "Lead time days", "Maximum age days", "Transformations", "All pages", "Legibility", "Name consistency", "Language", "Legalization check", "Actions"},
     "ACT": {"Purpose", "Requirements", "Dependencies", "Status", "Class", "Owner", "Target", "Deadline", "Expected receipt", "Receipt", "Decision"},
     "MILESTONE": {"Date", "Kind", "Status", "Depends on", "Linked records", "Consequence if missed"},
     "LOG": {"Area", "Status", "Applies to", "Actions", "Decision", "Notes"},
@@ -47,6 +47,7 @@ FIELD = re.compile(r"^- ([^:]+):\s*(.+)$", re.MULTILINE)
 FRONTMATTER = re.compile(r"^---\n(.*?)\n---\n?", re.DOTALL)
 DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 TRANSFORMATIONS = {"original", "copy", "notarized_copy", "apostille", "legalization", "translation", "certified_translation", "upload"}
+QUALITY_STATUS = {"unknown", "pass", "fail", "not_applicable"}
 
 
 def frontmatter(text: str) -> dict[str, str] | None:
@@ -186,6 +187,12 @@ def main() -> int:
             for field_name in {"Lead time days", "Maximum age days"}:
                 if not valid_day_count(fields.get(field_name, "")):
                     errors.append(f"{identifier} has invalid {field_name}: {fields.get(field_name)}")
+            quality = {field_name: fields.get(field_name) for field_name in {"All pages", "Legibility", "Name consistency", "Language", "Legalization check"}}
+            for field_name, value in quality.items():
+                if value not in QUALITY_STATUS:
+                    errors.append(f"{identifier} has invalid {field_name}: {value}")
+            if fields.get("Status") == "ready" and any(value not in {"pass", "not_applicable"} for value in quality.values()):
+                errors.append(f"{identifier} is ready without a passed document quality gate")
         if prefix == "REQ":
             conflict = fields.get("Conflict")
             if conflict not in {"none", "needs_reconciliation"}:

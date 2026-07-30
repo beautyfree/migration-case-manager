@@ -62,6 +62,7 @@ python3 plugins/migration-case-manager/skills/migration-case-manager/scripts/val
 python3 plugins/migration-case-manager/skills/migration-case-manager/scripts/render_case.py ~/migration-cases/brazil-dnv-2026
 python3 plugins/migration-case-manager/skills/migration-case-manager/scripts/refresh_sources.py ~/migration-cases/brazil-dnv-2026
 python3 plugins/migration-case-manager/skills/migration-case-manager/scripts/document_dates.py ~/migration-cases/brazil-dnv-2026
+python3 plugins/migration-case-manager/skills/migration-case-manager/scripts/document_quality.py ~/migration-cases/brazil-dnv-2026
 ```
 
 The generated case contains numbered Markdown source files. `99-dashboard.md` is derived output; update the source files and render again rather than editing it.

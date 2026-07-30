@@ -24,6 +24,10 @@ DATES_SPEC = importlib.util.spec_from_file_location("document_dates", SCRIPTS / 
 assert DATES_SPEC and DATES_SPEC.loader
 DATES = importlib.util.module_from_spec(DATES_SPEC)
 DATES_SPEC.loader.exec_module(DATES)
+QUALITY_SPEC = importlib.util.spec_from_file_location("document_quality", SCRIPTS / "document_quality.py")
+assert QUALITY_SPEC and QUALITY_SPEC.loader
+QUALITY = importlib.util.module_from_spec(QUALITY_SPEC)
+QUALITY_SPEC.loader.exec_module(QUALITY)
 
 
 def run(script: str, *args: Path, expected: int = 0) -> subprocess.CompletedProcess[str]:
@@ -266,12 +270,46 @@ class CaseToolsTest(unittest.TestCase):
 - Lead time days: 14
 - Maximum age days: 30
 - Transformations: original
+- All pages: pass
+- Legibility: pass
+- Name consistency: pass
+- Language: pass
+- Legalization check: not_applicable
 - Actions: none
 """)
             lines = DATES.report(case, DATES.date.fromisoformat("2026-07-20"))
             self.assertIn("issued_too_early, order_too_late", lines[0])
             self.assertIn("earliest_issue 2026-07-02", lines[0])
             self.assertIn("latest_order 2026-07-18", lines[0])
+
+    def test_document_quality_blocks_ready_document_with_failed_check(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            case = Path(temp) / "case"
+            run("create_case.py", case)
+            append(case / "40-documents.md", """
+## DOC-001 — Synthetic scanned document
+
+- Owner: PERSON-001
+- Type: certificate
+- Status: ready
+- Required by: none
+- Evidence: none
+- Issued: unknown
+- Expires: unknown
+- Needed by: unknown
+- Lead time days: unknown
+- Maximum age days: unknown
+- Transformations: original
+- All pages: pass
+- Legibility: fail
+- Name consistency: pass
+- Language: not_applicable
+- Legalization check: not_applicable
+- Actions: none
+""")
+            result = run("validate_case.py", case, expected=1)
+            self.assertIn("ready without a passed document quality gate", result.stdout)
+            self.assertIn("DOC-001: fail (Legibility)", QUALITY.report(case)[0])
 
 
 if __name__ == "__main__":

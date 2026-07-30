@@ -18,6 +18,11 @@ schema_version: 2
 - Lead time days: unknown
 - Maximum age days: unknown
 - Transformations: original
+- All pages: unknown
+- Legibility: unknown
+- Name consistency: unknown
+- Language: unknown
+- Legalization check: unknown
 - Actions: ACT-001
 
 ## DOC-002 — Spouse travel document
@@ -33,6 +38,11 @@ schema_version: 2
 - Lead time days: unknown
 - Maximum age days: unknown
 - Transformations: original
+- All pages: unknown
+- Legibility: unknown
+- Name consistency: unknown
+- Language: unknown
+- Legalization check: unknown
 - Actions: ACT-001
 
 ## DOC-003 — Child travel document
@@ -48,6 +58,11 @@ schema_version: 2
 - Lead time days: unknown
 - Maximum age days: unknown
 - Transformations: original
+- All pages: unknown
+- Legibility: unknown
+- Name consistency: unknown
+- Language: unknown
+- Legalization check: unknown
 - Actions: ACT-001
 
 ## DOC-004 — Marriage evidence
@@ -63,6 +78,11 @@ schema_version: 2
 - Lead time days: unknown
 - Maximum age days: unknown
 - Transformations: original, apostille, certified_translation
+- All pages: unknown
+- Legibility: unknown
+- Name consistency: unknown
+- Language: unknown
+- Legalization check: unknown
 - Actions: ACT-005
 
 ## DOC-005 — Child kinship evidence
@@ -78,4 +98,9 @@ schema_version: 2
 - Lead time days: unknown
 - Maximum age days: unknown
 - Transformations: original, apostille, certified_translation
+- All pages: unknown
+- Legibility: unknown
+- Name consistency: unknown
+- Language: unknown
+- Legalization check: unknown
 - Actions: ACT-005
