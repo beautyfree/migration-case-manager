@@ -6,6 +6,7 @@ import { embeddedAssets } from "./embedded-assets";
 import { appendJsonLine, caseFile, loadCase, readCaseText, readJsonLines, runtimePath } from "./case-core";
 import { validateCase } from "./validate";
 import { initCase } from "./operations";
+import { renderCase } from "./render";
 
 const cookieName = "migration_os_session";
 const root = resolve(import.meta.dir, "..");
@@ -51,6 +52,7 @@ else if (command === "serve") await serve(caseDir, flags.includes("--no-browser"
 else if (command === "status") { const path = statePath(caseDir); console.log(existsSync(path) ? readFileSync(path, "utf8") : "not running"); }
 else if (command === "stop") { const path = statePath(caseDir); if (!existsSync(path)) throw new Error("not running"); const state = JSON.parse(readFileSync(path, "utf8")); process.kill(state.pid, "SIGTERM"); console.log("stop requested"); }
 else if (command === "validate") { const validation = validateCase(caseDir); console.log(JSON.stringify({ ok:validation.ok, command:"migration-os validate", result:validation, next_actions:validation.ok ? [] : [{ command:"migration-os validate <case-directory>", description:"Re-run after correcting the reported case source files." }] })); if (!validation.ok) process.exitCode = 1; }
+else if (command === "render") { const output = renderCase(caseDir); console.log(JSON.stringify({ ok:true, command:"migration-os render", result:{ output }, next_actions:[] })); }
 else if (command === "requests") { console.log(JSON.stringify(readJsonLines(requestPath(caseDir)), null, 2)); }
 else if (command === "claim" || command === "complete") { const id = flags[0]; if (!id) throw new Error("request ID required"); appendJsonLine(eventPath(caseDir), { kind:`request_${command}d`, request_id:id, at:new Date().toISOString() }); console.log(`${command} recorded`); }
 else if (command === "build") Bun.spawnSync(["bun", "run", "build"], { cwd:root, stdio:["inherit", "inherit", "inherit"] });
