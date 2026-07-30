@@ -33,10 +33,10 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 | Field | Value |
 | --- | --- |
 | Product phase | R2 — Official rules and source engine |
-| Current item | `R3-01` |
+| Current item | `R3-02` |
 | Current status | `in_progress` |
-| Next concrete outcome | Make every document's transformation chain explicit and validate that the chain is legal and actionable. |
-| Primary blocker | No implementation blocker; Georgia-specific document requirements remain conditional on the residence route and official recheck. |
+| Next concrete outcome | Compute and validate document review and expiry dates without pretending unknown issue dates are safe. |
+| Primary blocker | No implementation blocker; route-specific issue-date windows remain unknown until a residence route is selected. |
 | Canonical case data | Markdown case folder outside the plugin and outside Git. |
 | Current repository | `https://github.com/beautyfree/migration-case-manager` |
 
@@ -93,8 +93,8 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 
 | ID | Status | Work | Acceptance criteria | Depends on |
 | --- | --- | --- | --- | --- |
-| `R3-01` | `in_progress` | Model document transformations. | Original, copy, apostille, translation, upload and expiry variants are represented without storing raw document data. | `R1`, `R2-04` |
-| `R3-02` | `planned` | Add document validity and latest-safe-date computation. | Fixture catches an item ordered too early or too late. | `R3-01` |
+| `R3-01` | `done` | Model document transformations. | Document chains are now validated: known transforms only, original first, upload last, no duplicated transform or apostille/legalization combination, and apostille precedes translation. A negative fixture verifies rejection without storing raw documents. | `R1`, `R2-04` |
+| `R3-02` | `in_progress` | Add document validity and latest-safe-date computation. | Fixture catches an item ordered too early or too late. | `R3-01` |
 | `R3-03` | `planned` | Add document quality gate. | Checks all-pages, legibility, name consistency, language, and required legalization state as explicit results. | `R3-01` |
 | `R3-04` | `planned` | Add provider research runbook. | Agent can compare notary, translator, apostille, or visa-center candidates and present evidence before selection. | `R2-04` |
 
@@ -161,3 +161,4 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 | 2026-07-30 | Completed `R2-01`: the first reference corridor is Russia → Georgia for a family of three, with individual-entrepreneur registration as the intended economic step. Started `R2-04`; live primary-source research is in progress. |
 | 2026-07-30 | Completed `R2-04` and `R4-02`: added a sanitized, validated, source-linked Georgia reference case and exercised its dashboard. Started `R2-05` to make source freshness observable over time. |
 | 2026-07-30 | Completed `R2-05`: added source-refresh diff with safe hash-only state, deterministic coverage for new/changed/unavailable/stale states, and a successful live Georgia dry run. Started `R3-01`. |
+| 2026-07-30 | Completed `R3-01`: transformation chains now have an enforceable order and safety contract. Started `R3-02`. |

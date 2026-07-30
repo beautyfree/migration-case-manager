@@ -170,6 +170,26 @@ class CaseToolsTest(unittest.TestCase):
             result = run("validate_case.py", case, expected=1)
             self.assertIn("must block and escalate conflicting official sources", result.stdout)
 
+    def test_validator_rejects_unsafe_document_transformation_chain(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            case = Path(temp) / "case"
+            run("create_case.py", case)
+            append(case / "40-documents.md", """
+## DOC-001 — Synthetic civil-status document
+
+- Owner: PERSON-001
+- Type: civil-status document
+- Status: needs_transformation
+- Required by: none
+- Evidence: none
+- Issued: unknown
+- Expires: unknown
+- Transformations: translation, apostille, original, upload
+- Actions: none
+""")
+            result = run("validate_case.py", case, expected=1)
+            self.assertIn("must begin with original", result.stdout)
+
     def test_v1_migration_is_non_destructive_and_valid(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)

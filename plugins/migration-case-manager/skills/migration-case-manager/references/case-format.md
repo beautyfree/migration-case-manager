@@ -128,6 +128,7 @@ Use the exact field labels specified below. Link fields contain a comma-separate
 
 - Required fields: `Owner`, `Type`, `Status`, `Required by`, `Evidence`, `Issued`, `Expires`, `Transformations`, `Actions`.
 - `Transformations` lists the required chain using only `original`, `copy`, `notarized_copy`, `apostille`, `legalization`, `translation`, `certified_translation`, and `upload`.
+- A non-empty chain begins with `original`; `upload`, if required, is last; never combine `apostille` and `legalization`; and place an apostille before any translation that covers it. `none` is allowed only when the transformation requirement is genuinely not yet known.
 - `Evidence` points to `EVD-*` records or `none`; never include a direct sensitive pathname in a document record.
 
 ### Actions and receipts

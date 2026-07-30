@@ -46,6 +46,7 @@ ID_REF = re.compile(r"\b(?:PERSON|ROUTE|SRC|REQ|DOC|ACT|MILESTONE|LOG|DEC|EVD)-\
 FIELD = re.compile(r"^- ([^:]+):\s*(.+)$", re.MULTILINE)
 FRONTMATTER = re.compile(r"^---\n(.*?)\n---\n?", re.DOTALL)
 DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+TRANSFORMATIONS = {"original", "copy", "notarized_copy", "apostille", "legalization", "translation", "certified_translation", "upload"}
 
 
 def frontmatter(text: str) -> dict[str, str] | None:
@@ -82,6 +83,27 @@ def valid_date(value: str) -> bool:
     except ValueError:
         return False
     return True
+
+
+def document_chain_error(value: str) -> str | None:
+    if value == "none":
+        return None
+    chain = [item.strip() for item in value.split(",")]
+    if not chain or any(item not in TRANSFORMATIONS for item in chain):
+        return "contains an unsupported transformation"
+    if len(set(chain)) != len(chain):
+        return "repeats a transformation"
+    if chain[0] != "original":
+        return "must begin with original"
+    if "apostille" in chain and "legalization" in chain:
+        return "cannot require both apostille and legalization"
+    if "upload" in chain and chain[-1] != "upload":
+        return "must end with upload when upload is required"
+    if "translation" in chain and "apostille" in chain and chain.index("translation") < chain.index("apostille"):
+        return "must place translation after apostille"
+    if "certified_translation" in chain and "apostille" in chain and chain.index("certified_translation") < chain.index("apostille"):
+        return "must place certified_translation after apostille"
+    return None
 
 
 def main() -> int:
@@ -153,6 +175,10 @@ def main() -> int:
             source_ids = ID_REF.findall(fields.get("Source", ""))
             if not source_ids or any(headers.get(source_id, ("", "", {}))[2].get("Status") != "current" for source_id in source_ids):
                 errors.append(f"{identifier} is {fields['Status']} without a current source")
+        if prefix == "DOC":
+            chain_error = document_chain_error(fields.get("Transformations", ""))
+            if chain_error:
+                errors.append(f"{identifier} Transformations {chain_error}")
         if prefix == "REQ":
             conflict = fields.get("Conflict")
             if conflict not in {"none", "needs_reconciliation"}:
