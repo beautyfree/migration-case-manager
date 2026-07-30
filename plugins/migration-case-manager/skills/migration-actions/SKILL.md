@@ -17,6 +17,8 @@ Use these classes exactly:
 - `confirmation_required`: submit a form, reserve a slot, send a message, disclose data, or begin a payment. Stop at the final irreversible control and present the complete result.
 - `human_only`: login challenge/2FA, biometric capture, notarization, identity verification, legal signature, medical examination, in-person handover, and any action the site requires from the person.
 
+For a local provider, read [provider-research.md](references/provider-research.md) before searching. Present the source-linked comparison before selection; never turn a search result into an implied provider choice.
+
 ## Execute safely
 
 1. Verify the website domain and route against `SRC-*` before entering information.

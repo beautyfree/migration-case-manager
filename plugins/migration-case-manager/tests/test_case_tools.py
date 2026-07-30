@@ -311,6 +311,17 @@ class CaseToolsTest(unittest.TestCase):
             self.assertIn("ready without a passed document quality gate", result.stdout)
             self.assertIn("DOC-001: fail (Legibility)", QUALITY.report(case)[0])
 
+    def test_provider_comparison_shell_is_non_destructive(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            case = Path(temp) / "case"
+            run("create_case.py", case)
+            first = run("create_provider_comparison.py", case, Path("ACT-001"), Path("--service"), Path("translator"), Path("--city"), Path("Tbilisi"), expected=0)
+            self.assertIn("Created provider comparison", first.stdout)
+            comparison = case / "provider-comparisons" / "ACT-001.md"
+            self.assertIn("Requires user confirmation", comparison.read_text(encoding="utf-8"))
+            second = run("create_provider_comparison.py", case, Path("ACT-001"), Path("--service"), Path("translator"), Path("--city"), Path("Tbilisi"), expected=2)
+            self.assertIn("refusing to overwrite", second.stderr)
+
 
 if __name__ == "__main__":
     unittest.main()

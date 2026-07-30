@@ -33,10 +33,10 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 | Field | Value |
 | --- | --- |
 | Product phase | R2 — Official rules and source engine |
-| Current item | `R3-04` |
+| Current item | `R4-03` |
 | Current status | `in_progress` |
-| Next concrete outcome | Make local-provider research reproducible: compare candidates, preserve evidence, and stop before booking or payment. |
-| Primary blocker | No provider can be chosen until the user supplies city, timing, document type, and budget/availability constraints. |
+| Next concrete outcome | Model appointment lifecycle so search, selection, booking, receipt, reschedule, and cancellation are distinguishable. |
+| Primary blocker | Live booking remains blocked until the user supplies a provider/city and gives scoped confirmation. |
 | Canonical case data | Markdown case folder outside the plugin and outside Git. |
 | Current repository | `https://github.com/beautyfree/migration-case-manager` |
 
@@ -97,7 +97,7 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 | `R3-02` | `done` | Add document validity and latest-safe-date computation. | `document_dates.py` derives earliest-safe-issue and latest-safe-order dates from explicit case data and reports early-issued or late-ordering risk. A deterministic fixture proves both detections; unknown data remains explicitly insufficient. | `R3-01` |
 | `R3-03` | `done` | Add document quality gate. | `document_quality.py` reports all-pages, legibility, name consistency, language, and legalization checks without opening evidence; validator prevents `ready` with failed or unknown applicable checks. Deterministic failed-legibility fixture passes. | `R3-01` |
 | `R3-03` | `planned` | Add document quality gate. | Checks all-pages, legibility, name consistency, language, and required legalization state as explicit results. | `R3-01` |
-| `R3-04` | `planned` | Add provider research runbook. | Agent can compare notary, translator, apostille, or visa-center candidates and present evidence before selection. | `R2-04` |
+| `R3-04` | `done` | Add provider research runbook. | `provider-research.md` mandates source-linked comparison and explicit consent boundaries; `create_provider_comparison.py` creates a non-destructive two-candidate Markdown shell. Contract test verifies creation and overwrite refusal. | `R2-04` |
 
 ## Release R4 — Action runner
 
@@ -107,7 +107,7 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 | --- | --- | --- | --- | --- |
 | `R4-01` | `done` | Define executable action and receipt schema. | Actions encode dependencies, scope, consent class, official URL/provider, expected receipt, state, owner, and deadline. | `R1` |
 | `R4-02` | `done` | Add browser runbook protocol. | The Georgia reference case binds each browser target to an official source domain and action class; the runbook blocks data entry on a domain mismatch and requires current scoped consent before submission, booking, payment, messaging, or disclosure. | `R4-01`, `R2-04` |
-| `R4-03` | `planned` | Add appointment/provider workflow. | Search, comparison, user selection, booking confirmation, and reschedule/cancel states are distinguished. | `R3-04`, `R4-02` |
+| `R4-03` | `in_progress` | Add appointment/provider workflow. | Search, comparison, user selection, booking confirmation, and reschedule/cancel states are distinguished. | `R3-04`, `R4-02` |
 | `R4-04` | `done` | Add action status and receipt verification. | A page opening cannot close an action; a receipt or reason is required. | `R4-01` |
 
 ## Release R5 — Landing OS
@@ -165,3 +165,4 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 | 2026-07-30 | Completed `R3-01`: transformation chains now have an enforceable order and safety contract. Started `R3-02`. |
 | 2026-07-30 | Completed `R3-02`: added deterministic document issue/order timing analysis; unknown input remains a visible gap. Started `R3-03`. |
 | 2026-07-30 | Completed `R3-03`: document readiness now has an explicit, evidence-free quality gate. Started `R3-04`. |
+| 2026-07-30 | Completed `R3-04`: added consent-safe provider comparison runbook and non-destructive comparison generator. Started `R4-03`. |
