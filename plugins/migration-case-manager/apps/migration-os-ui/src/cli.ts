@@ -10,6 +10,7 @@ import { renderCase } from "./render";
 import { migrateCase } from "./migrate";
 import { arrivalPhase, documentDates, documentQuality, logisticsReadiness } from "./reports";
 import { createBranch, createProviderComparison } from "./generators";
+import { refreshSources } from "./source-refresh";
 
 const cookieName = "migration_os_session";
 const root = resolve(import.meta.dir, "..");
@@ -58,6 +59,7 @@ if (command === "logistics" && target === "readiness") { report("migration-os lo
 if (command === "arrival" && target === "phase") { const asOf = flags[1] === "--as-of" ? new Date(`${flags[2]}T00:00:00Z`) : new Date(); report("migration-os arrival phase", () => ({ as_of:asOf.toISOString().slice(0, 10), lane:arrivalPhase(flags[0], asOf) })); process.exit(); }
 if (command === "branch" && target === "create") { const ownerAt = flags.indexOf("--owner"), owner = ownerAt >= 0 ? flags[ownerAt + 1] : "unknown"; report("migration-os branch create", () => ({ output:createBranch(flags[0], flags[1], owner) })); process.exit(); }
 if (command === "provider" && target === "comparison") { const serviceAt = flags.indexOf("--service"), cityAt = flags.indexOf("--city"); report("migration-os provider comparison", () => ({ output:createProviderComparison(flags[0], flags[1], serviceAt >= 0 ? flags[serviceAt + 1] ?? "" : "", cityAt >= 0 ? flags[cityAt + 1] ?? "" : "") })); process.exit(); }
+if (command === "sources" && target === "refresh") { try { console.log(JSON.stringify({ ok:true, command:"migration-os sources refresh", result:await refreshSources(flags[0], { dryRun:flags.includes("--dry-run") }), next_actions:[] })); } catch (error) { console.log(JSON.stringify({ ok:false, command:"migration-os sources refresh", error:{ code:error instanceof Error && error.message.includes("SOURCE_FETCH") ? error.message : "CASE_INVALID", message:error instanceof Error ? error.message : "source refresh failed" }, fix:"Only use existing public HTTPS source records; this command never sends case data.", next_actions:[] })); process.exitCode = 1; } process.exit(); }
 if (command === "migrate") {
   const destination = flags[0];
   if (!target || !destination) { usage(); process.exit(2); }

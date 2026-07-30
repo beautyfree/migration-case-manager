@@ -6,6 +6,7 @@ import { assertSafeCaseWrite, loadCase, parseFrontmatter, parseRecords, writeCas
 import { validateCase } from "../src/validate";
 import { migrateCase } from "../src/migrate";
 import { renderCase } from "../src/render";
+import { refreshSources } from "../src/source-refresh";
 
 const cleanup: string[] = [];
 function fixture(): string {
@@ -169,5 +170,28 @@ describe("case core", () => {
     expect(dashboard).toContain("Case: `CASE-001` · active · choose_route");
     expect(dashboard).toContain("Landing lane: `pre_move (move date unknown)`");
     expect(dashboard).toContain("This dashboard is generated. Update numbered source files, validate the case, then render again.");
+  });
+
+  test("refreshes only public source hashes and preserves dry-run state", async () => {
+    const caseDir = fixture(), requirements = join(caseDir, "30-requirements.md");
+    writeFileSync(requirements, `${readFileSync(requirements, "utf8")}
+## SRC-901 — Public fixture source
+
+- Publisher: Example authority
+- Official URL: https://authority.example/rule
+- Retrieved: 2026-07-30
+- Updated: unknown
+- Applies to: ROUTE-001
+- Rule summary: Fixture only.
+- Fresh until: 2099-01-01
+- Status: current
+`, "utf8");
+    const first = await refreshSources(caseDir, { asOf:"2026-07-30", fetcher:async () => new TextEncoder().encode("first public page") });
+    expect(first.lines.find(line => line.startsWith("SRC-901:"))).toContain("new");
+    const state = readFileSync(join(caseDir, ".migration-os", "source-state.json"), "utf8");
+    expect(state).toContain("content_sha256"); expect(state).not.toContain("first public page");
+    const unchanged = await refreshSources(caseDir, { asOf:"2026-07-31", dryRun:true, fetcher:async () => new TextEncoder().encode(" first\n public page ") });
+    expect(unchanged.lines.find(line => line.startsWith("SRC-901:"))).toContain("unchanged");
+    expect(readFileSync(join(caseDir, ".migration-os", "source-state.json"), "utf8")).toBe(state);
   });
 });
