@@ -2,10 +2,10 @@
 /** Local-only Migration OS UI daemon. Markdown remains the authoritative data source. */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
+import { embeddedAssets } from "./embedded-assets";
 
 const cookieName = "migration_os_session";
 const root = resolve(import.meta.dir, "..");
-const assets = join(root, "dist");
 type RecordItem = { id: string; title: string; fields: Record<string, string> };
 
 function parseMeta(text: string) { const hit = text.match(/^---\n([\s\S]*?)\n---/); return Object.fromEntries((hit?.[1] ?? "").split("\n").filter(x => x.includes(":" )).map(x => x.split(/:(.*)/s).slice(0, 2).map(s => s.trim()))); }
@@ -32,7 +32,6 @@ function acceptDecision(caseDir: string, id: string) {
 function contentType(path: string) { return path.endsWith(".js") ? "text/javascript" : path.endsWith(".css") ? "text/css" : path.endsWith(".html") ? "text/html" : "application/octet-stream"; }
 function openBrowser(url: string) { if (process.platform === "darwin") Bun.spawn(["open", url], { stdout:"ignore", stderr:"ignore" }); else if (process.platform === "win32") Bun.spawn(["cmd", "/c", "start", "", url], { stdout:"ignore", stderr:"ignore" }); else Bun.spawn(["xdg-open", url], { stdout:"ignore", stderr:"ignore" }); }
 async function serve(caseDir: string, noBrowser: boolean) {
-  if (!existsSync(join(assets, "index.html"))) throw new Error(`missing prebuilt UI assets: ${assets}; run bun run build`);
   const casePath = resolve(caseDir); payload(casePath); const token = crypto.randomUUID() + crypto.randomUUID();
   const server = Bun.serve({ hostname:"127.0.0.1", port:0, fetch(request) {
     const url = new URL(request.url); const authed = request.headers.get("cookie")?.includes(`${cookieName}=${token}`) ?? false;
@@ -46,9 +45,9 @@ async function serve(caseDir: string, noBrowser: boolean) {
       appendJsonLine(requestPath(casePath), entry); appendJsonLine(eventPath(casePath), { kind:"request_created", request_id:entry.id, at:entry.created_at }); return Response.json(entry, { status:201 });
     });
     if (url.pathname === "/api/decisions/accept" && request.method === "POST") return request.json().then((body: any) => { try { if (body?.confirm !== true) return new Response("explicit confirmation required", {status:400}); acceptDecision(casePath, body.id); return Response.json(payload(casePath)); } catch (error) { return new Response(error instanceof Error ? error.message : "invalid decision", {status:400}); } });
-    const requested = url.pathname === "/" ? "index.html" : url.pathname.slice(1); const path = resolve(assets, requested);
-    if (!path.startsWith(assets) || !existsSync(path)) return new Response("not found", { status:404 });
-    return new Response(Bun.file(path), { headers:{ "Content-Type":contentType(path), "Cache-Control":"no-store" } });
+    const asset = embeddedAssets[url.pathname];
+    if (!asset) return new Response("not found", { status:404 });
+    return new Response(Bun.file(asset), { headers:{ "Content-Type":contentType(url.pathname), "Cache-Control":"no-store" } });
   }});
   const dir = dirname(statePath(casePath)); mkdirSync(dir, { recursive:true }); writeFileSync(statePath(casePath), JSON.stringify({ pid:process.pid, port:server.port, started_at:new Date().toISOString(), case_id:payload(casePath).case.case_id }), "utf8");
   const url = `http://127.0.0.1:${server.port}/?token=${token}`; console.log(`Migration OS UI: ${url}`); if (!noBrowser) openBrowser(url);

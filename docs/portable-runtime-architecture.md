@@ -70,4 +70,4 @@ Markdown is the durable authority. `.migration-os/` stays ignored, local, and di
 
 Port functionality in dependency order: parser/writer and validation first; then creation/rendering/migration; then date/quality/logistics reports and branches; finally source refresh and provider-comparison generation. For every port, retain fixture and negative tests and compare structured output to the Python implementation. Remove a Python entry point from skills only after its TypeScript counterpart reaches parity.
 
-The current standalone compile claim is not enough: the existing server resolves `dist/` from the filesystem beside its source. R8 must embed all UI assets in the executable and test the binary after copying it to an otherwise empty temporary directory.
+The standalone binary embeds the compiled HTML, JavaScript, and CSS through Bun `type:file` imports. Its release gate includes an isolated test in which only the binary and a copied case folder are present.

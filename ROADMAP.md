@@ -33,9 +33,9 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 | Field | Value |
 | --- | --- |
 | Product phase | R8 — Portable native runtime |
-| Current item | R8-02 — standalone embedded UI binary |
+| Current item | R8-03 — TypeScript case-core library |
 | Current status | `ready` |
-| Next concrete outcome | Compile a `migration-os` binary that contains the React UI itself and can serve a copied fixture case without a neighbouring `dist/`, Bun, Node, or Python installation. |
+| Next concrete outcome | Extract a tested TypeScript parser/writer so the native CLI, UI, and forthcoming Python replacements share one Markdown-safe case model. |
 | Primary blocker | None for architecture and core migration. Signing/notarization credentials are required only before the non-developer public-release gate. |
 | Canonical case data | Markdown case folder outside the plugin and outside Git. |
 | Current repository | `https://github.com/beautyfree/migration-case-manager` |
@@ -159,7 +159,7 @@ Migration OS is a portable, Markdown-first operating system for an individual's 
 | ID | Status | Work | Acceptance criteria | Depends on |
 | --- | --- | --- | --- | --- |
 | `R8-01` | `done` | Write the runtime ADR and machine-readable CLI contract. | `docs/portable-runtime-architecture.md`, `contracts/cli-contract.json`, and `contracts/cli-response.schema.json` define supported targets, command tree, JSON envelope, errors, storage/network policy, and upgrades. `bun run check:contract` passed with 14 commands on 2026-07-30. | `R7` |
-| `R8-02` | `planned` | Make `migration-os serve` truly standalone. | A compiled binary embeds the React assets rather than resolving `dist/` beside itself; copied alone to a temporary directory, it can serve a fixture case, open the browser, reject unauthenticated API access, and stop cleanly. | `R8-01` |
+| `R8-02` | `done` | Make `migration-os serve` truly standalone. | Vite now emits stable UI assets which the CLI imports with Bun `type:file`; `bun run compile` embeds HTML/JS/CSS in `bin/migration-os`. In an isolated directory containing only the binary and copied Georgia fixture, bootstrap returned 302, unauthenticated API returned 403, and authenticated HTML/React script returned 200 on 2026-07-30. | `R8-01` |
 | `R8-03` | `planned` | Extract a TypeScript case-core library. | One tested parser/writer owns frontmatter, typed records, IDs, safe Markdown updates, JSONL state, sensitive-field guards, and structured errors. UI and CLI use this same library; Markdown remains the only durable case store. | `R8-01` |
 | `R8-04` | `planned` | Port deterministic Python case operations. | `init`, `validate`, `render`, migration, document dates/quality, logistics readiness, arrival lane, resilience branches, and provider-comparison shell run through `migration-os`; golden fixtures and negative tests match the current Python behaviour before Python is removed from the skills. | `R8-03` |
 | `R8-05` | `planned` | Port the source-refresh engine with explicit network policy. | `migration-os sources refresh` records only public URL/hash/date state, has timeout/redirect/domain controls, supports `--dry-run`, and preserves `new`, `changed`, `unavailable`, and `stale` semantics. Live runs remain agent-initiated and never transmit case data. | `R8-03` |
@@ -241,3 +241,4 @@ Out of scope for R8: a central case server, cloud sync, accounts, background age
 | 2026-07-30 | Completed R7 release gate: isolated Georgia end-to-end run proved loopback UI, source refresh, agent bridge, provider artifact, validation, and stop-before-irreversible-action behavior. |
 | 2026-07-30 | Added R8 portable-native-runtime plan: self-contained binary distribution, TypeScript migration away from Python, verified bootstrap, signing, and clean-machine release gate. R8-01 is the next ready item. |
 | 2026-07-30 | Completed `R8-01`: added the portable-runtime ADR and checked machine-readable native CLI/response contracts. Started `R8-02`. |
+| 2026-07-30 | Completed `R8-02`: `migration-os` now embeds its Vite UI through explicit Bun file imports; isolated binary test proved loopback authentication and asset serving without neighbouring project files. Started `R8-03`. |
